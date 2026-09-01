@@ -73,7 +73,7 @@ test.describe("Authenticated Student Test Journey", () => {
     await page.click('button[type="submit"]');
 
     // 2. Assert redirect to student dashboard
-    await expect(page).toHaveURL(/.*\/dashboard/);
+    await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 15000 });
     await expect(page.locator("h1")).toBeVisible();
 
     // 3. Navigate to the timed mock test

@@ -67,94 +67,75 @@ const cbtFeatures = [
   },
 ];
 
-const popularSearches = [
-  { label: "NSSB CGL", q: "nssb" },
-  { label: "SSC CGL Tier-I", q: "ssc" },
-  { label: "NPSC Civil Services", q: "npsc" },
-  { label: "Nagaland GK", q: "nagaland" },
-  { label: "Quantitative Aptitude", q: "quantitative" },
-];
-
 export default async function Home() {
   const exams = await getPublishedExamCatalog();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A]">
-      {/* 1. Global Navigation Bar */}
-      <header className="sticky top-0 z-40 border-b border-[#E2E8F0] bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+    <div className="min-h-screen bg-white text-[#0F172A]">
+      {/* 1. Global Navigation Bar (Matching Reference Clean Design) */}
+      <header className="sticky top-0 z-40 border-b border-[#E2E8F0] bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#4F46E5] text-base font-bold text-white shadow-xs">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#4F46E5] text-sm font-bold text-white shadow-xs">
                 🎯
               </div>
-              <div className="flex items-baseline">
-                <span className="text-xl font-black tracking-tight text-[#0F172A]">
-                  MockTest<span className="text-[#4F46E5]">Portal</span>
-                </span>
-                <span className="ml-2 hidden rounded bg-[#EEF2FF] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#4F46E5] sm:inline-block">
-                  CBT 2.0
-                </span>
-              </div>
+              <span className="text-xl font-bold tracking-tight text-[#0F172A]">
+                MockTest<span className="text-[#4F46E5]">Portal</span>
+              </span>
             </Link>
 
-            <nav className="hidden items-center gap-6 lg:flex text-sm font-semibold text-[#64748B]">
+            <nav className="hidden items-center gap-6 lg:flex text-sm font-medium text-[#64748B]">
+              <Link href="/exams" className="transition hover:text-[#0F172A]">
+                Exams ▾
+              </Link>
               <Link
                 href="/exams"
-                className="text-[#4F46E5] border-b-2 border-[#4F46E5] pb-1 font-bold transition"
+                className="text-[#4F46E5] font-semibold border-b-2 border-[#4F46E5] pb-0.5"
               >
                 Test Series
               </Link>
-              <Link
-                href="/exams"
-                className="transition hover:text-[#4F46E5]"
-              >
+              <Link href="/exams" className="transition hover:text-[#0F172A]">
                 Browse exams
               </Link>
-              <Link
-                href="/dashboard/tests"
-                className="transition hover:text-[#4F46E5]"
-              >
+              <Link href="/dashboard/tests" className="transition hover:text-[#0F172A]">
                 Test Library
               </Link>
-              <Link
-                href="/dashboard/performance"
-                className="transition hover:text-[#4F46E5]"
-              >
+              <Link href="/dashboard/performance" className="transition hover:text-[#0F172A]">
                 Performance
-              </Link>
-              <Link
-                href="/dashboard/bookmarks"
-                className="transition hover:text-[#4F46E5]"
-              >
-                Bookmarks
               </Link>
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Header Search Bar */}
-            <form action="/exams" method="GET" className="relative hidden md:block w-48 lg:w-60">
+          <div className="flex items-center gap-4">
+            {/* Header Search Input */}
+            <form action="/exams" method="GET" className="relative hidden md:block w-52 lg:w-64">
               <input
                 type="text"
                 name="q"
-                placeholder="Search exams..."
-                className="w-full rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] py-1.5 pl-8 pr-3 text-xs text-[#0F172A] placeholder-[#64748B] focus:border-[#4F46E5] focus:bg-white focus:outline-none"
+                placeholder="Search"
+                className="w-full rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] py-1.5 pl-3 pr-8 text-xs text-[#0F172A] placeholder-[#94A3B8] focus:border-[#4F46E5] focus:bg-white focus:outline-none"
               />
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-[#64748B]">
-                🔍
-              </span>
+              <button
+                type="submit"
+                className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#94A3B8] hover:text-[#4F46E5]"
+                aria-label="Search"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
             </form>
 
             <Link
               href="/login"
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-[#64748B] transition hover:text-[#0F172A]"
+              className="text-xs font-semibold text-[#64748B] hover:text-[#0F172A] transition"
             >
               Sign In
             </Link>
             <Link
               href="/dashboard"
-              className="rounded-lg bg-[#16A34A] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#15803D]"
+              className="rounded-lg bg-[#16A34A] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#15803D]"
             >
               Get Started
             </Link>
@@ -162,120 +143,67 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* 2. Hero Section with User's Banner Background */}
-      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-[#F5F8FE] px-6 py-12 lg:py-20 min-h-[580px] flex items-center">
-        {/* Desktop Hero Background Illustration */}
-        <div
-          className="absolute inset-0 bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none"
-          style={{ backgroundImage: "url('/images/hero-banner.png')" }}
-        />
-        {/* Soft gradient mask on the left for maximum text contrast across viewports */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F5F8FE] via-[#F5F8FE]/95 to-transparent lg:via-[#F5F8FE]/80 lg:w-[60%] pointer-events-none" />
+      {/* 2. Clean, Simple Hero Section (Exact Layout of Reference Image) */}
+      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-white px-6 py-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            {/* Left Column: Simple Headline, Subtitle, Prompt & Search Bar */}
+            <div className="max-w-xl">
+              <h1 className="text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem] leading-[1.18]">
+                India&apos;s Structured Online Test<br />
+                <span className="text-[#0F172A]">series platform</span>
+              </h1>
 
-        <div className="relative z-10 mx-auto max-w-7xl w-full">
-          <div className="max-w-xl lg:max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E2E8F0] bg-white/90 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] shadow-xs backdrop-blur-xs">
-              <span className="flex h-2 w-2 rounded-full bg-[#4F46E5] animate-ping" />
-              Nagaland & India&apos;s Dedicated Test Portal
-            </div>
-
-            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
-              India&apos;s Structured Online{" "}
-              <span className="block text-[#4F46E5]">
-                Test Series Platform
-              </span>
-            </h1>
-
-            <p className="mt-4 text-base leading-relaxed text-[#64748B] sm:text-lg">
-              Boost your exam preparation with Test Series for <strong>NSSB</strong>,{" "}
-              <strong>SSC</strong>, <strong>NPSC</strong> & All other State Govt. Exams.
-            </p>
-
-            <div className="mt-6 pt-2">
-              <p className="text-sm font-semibold text-[#0F172A]">
-                814+ tests covered. Which exam are you preparing for?
+              <p className="mt-5 text-base sm:text-lg text-[#64748B] leading-relaxed">
+                Boost your exam preparation with Test Series for Banking, SSC, RRB, NSSB, NPSC &amp; All other Govt. Exams
               </p>
 
-              {/* Big Search Input Form (like Testbook) */}
-              <form action="/exams" method="GET" className="relative mt-3 max-w-xl">
-                <input
-                  type="text"
-                  name="q"
-                  placeholder="Search for your Exam (e.g. NSSB CGL, SSC Tier-I, NPSC Prelims)..."
-                  className="w-full rounded-2xl border border-[#E2E8F0] bg-white py-4 pl-5 pr-14 text-sm text-[#0F172A] shadow-md transition placeholder-[#64748B] focus:border-[#4F46E5] focus:outline-none focus:ring-4 focus:ring-[#EEF2FF]"
-                />
-                <button
-                  type="submit"
-                  className="absolute inset-y-2 right-2 flex w-11 items-center justify-center rounded-xl bg-[#4F46E5] text-white shadow-xs transition hover:bg-[#4338CA]"
-                  aria-label="Search Exam"
-                >
-                  🔍
-                </button>
-              </form>
+              <div className="mt-10">
+                <p className="text-sm font-semibold text-[#0F172A]">
+                  814+ exams covered. Which exam are you preparing for?
+                </p>
 
-              {/* Popular Keywords Pills */}
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
-                <span className="font-semibold text-[#0F172A]">Popular:</span>
-                {popularSearches.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={`/exams?q=${encodeURIComponent(item.q)}`}
-                    className="rounded-full border border-[#E2E8F0] bg-white/90 px-3 py-1 font-medium text-[#64748B] shadow-xs backdrop-blur-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF] hover:text-[#4F46E5]"
+                {/* Clean, Simple Search Bar matching Reference */}
+                <form action="/exams" method="GET" className="relative mt-3 max-w-xl">
+                  <input
+                    type="text"
+                    name="q"
+                    placeholder="Search for your Exam"
+                    className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pl-5 pr-12 text-sm text-[#0F172A] placeholder-[#94A3B8] shadow-xs transition focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#94A3B8] hover:text-[#4F46E5] transition"
+                    aria-label="Search for Exam"
                   >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Direct Action Buttons */}
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/exams"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#4338CA] hover:shadow-lg"
-                >
-                  Explore Test Series
-                  <span>➔</span>
-                </Link>
-                <Link
-                  href="/dashboard/tests"
-                  className="inline-flex items-center rounded-xl border border-[#E2E8F0] bg-white px-6 py-3.5 text-sm font-bold text-[#0F172A] shadow-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF]/30"
-                >
-                  Start Free Mock Test
-                </Link>
-              </div>
-
-              {/* Visual Feature Highlights matching the background graphics */}
-              <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#64748B]">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
-                  📈 <span>Score Growth Analytics</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
-                  🎯 <span>Real-Time Negative Marking</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
-                  📅 <span>Exam Schedule Tracker</span>
-                </span>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </form>
               </div>
             </div>
-          </div>
 
-          {/* Quick Exam Metrics Ribbon */}
-          <div className="mt-14 grid grid-cols-2 gap-4 border-t border-[#E2E8F0]/80 pt-8 sm:grid-cols-4 max-w-4xl">
-            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
-              <p className="text-2xl font-extrabold text-[#4F46E5]">NSSB & NPSC</p>
-              <p className="text-xs font-medium text-[#64748B]">State Exam Aligned</p>
-            </div>
-            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
-              <p className="text-2xl font-extrabold text-[#4F46E5]">SSC CGL/CHSL</p>
-              <p className="text-xs font-medium text-[#64748B]">National Tier Simulations</p>
-            </div>
-            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
-              <p className="text-2xl font-extrabold text-[#16A34A]">&plusmn; Exact</p>
-              <p className="text-xs font-medium text-[#64748B]">Negative Marking Logic</p>
-            </div>
-            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
-              <p className="text-2xl font-extrabold text-[#4F46E5]">KaTeX</p>
-              <p className="text-xs font-medium text-[#64748B]">Formula & Math Clarity</p>
+            {/* Right Column: Clean Illustration & Support Bubble */}
+            <div className="relative flex items-center justify-center lg:justify-end">
+              <img
+                src="/images/hero-student.png"
+                alt="Structured Online Test Series Platform"
+                className="w-full max-w-md lg:max-w-lg h-auto object-contain"
+              />
+
+              {/* Floating WhatsApp Quick Support Bubble (From Reference Image) */}
+              <a
+                href="https://wa.me/"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Student Support & Exam Queries"
+                className="absolute -bottom-2 right-2 lg:right-0 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110"
+              >
+                <svg className="h-7 w-7 fill-current" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                </svg>
+              </a>
             </div>
           </div>
         </div>
@@ -327,7 +255,7 @@ export default async function Home() {
 
       {/* 4. Active Catalog Quick View */}
       {exams.length > 0 && (
-        <section className="border-t border-[#E2E8F0] bg-white px-6 py-16">
+        <section className="border-t border-[#E2E8F0] bg-[#F8FAFC] px-6 py-16">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -354,7 +282,7 @@ export default async function Home() {
                 <Link
                   key={exam.id}
                   href={`/exams/${exam.slug}`}
-                  className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs transition duration-200 hover:-translate-y-0.5 hover:border-[#4F46E5] hover:bg-white hover:shadow-md"
+                  className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white p-6 shadow-xs transition duration-200 hover:-translate-y-0.5 hover:border-[#4F46E5] hover:shadow-md"
                 >
                   <div>
                     <div className="flex items-center justify-between">
@@ -385,7 +313,7 @@ export default async function Home() {
       )}
 
       {/* 5. Platform Advantages */}
-      <section className="border-t border-[#E2E8F0] bg-[#F8FAFC] px-6 py-16">
+      <section className="border-t border-[#E2E8F0] bg-white px-6 py-16">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
@@ -403,7 +331,7 @@ export default async function Home() {
             {cbtFeatures.map((feat) => (
               <div
                 key={feat.title}
-                className="rounded-xl border border-[#E2E8F0] bg-white p-6 shadow-xs transition hover:border-[#4F46E5]"
+                className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-6 shadow-xs transition hover:border-[#4F46E5]"
               >
                 <div className="text-3xl">{feat.icon}</div>
                 <h3 className="mt-4 text-base font-bold text-[#0F172A]">{feat.title}</h3>
@@ -425,7 +353,7 @@ export default async function Home() {
           </div>
           <Link
             href="/dashboard/tests"
-            className="rounded-xl bg-[#4F46E5] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#4338CA]"
+            className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-[#4F46E5] shadow-md transition hover:bg-[#EEF2FF]"
           >
             Launch Mock Test ➔
           </Link>
