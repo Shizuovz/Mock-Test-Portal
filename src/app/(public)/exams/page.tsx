@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getPublishedExamCatalog } from "@/lib/content/catalog";
+import { ExamCatalogBrowser } from "@/components/catalog/exam-catalog-browser";
 
 export const dynamic = "force-dynamic";
 
@@ -27,31 +27,11 @@ export default async function ExamsPage() {
           </p>
           <h1 className="mt-3 text-3xl font-semibold">Choose an exam</h1>
           <p className="mt-4 max-w-2xl text-[#475467]">
-            Start with a published mock test. Catalog data is loaded from the
-            Supabase content model when configured.
+            Start with a published mock test. Search by examination or filter by category to explore available test series.
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {exams.map((exam) => (
-            <Link
-              key={exam.id}
-              href={`/exams/${exam.slug}`}
-              className="border border-[#ccd8d4] bg-[#fbfcfb] p-5 transition hover:border-[#146b5f]"
-            >
-              <p className="text-sm font-semibold text-[#146b5f]">
-                {exam.testCount} published test{exam.testCount === 1 ? "" : "s"}
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold">{exam.name}</h2>
-              <p className="mt-3 text-sm leading-6 text-[#475467]">
-                {exam.description}
-              </p>
-              <p className="mt-5 text-sm font-medium">
-                {exam.questionCount} question{exam.questionCount === 1 ? "" : "s"}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <ExamCatalogBrowser initialExams={exams} />
       </section>
     </main>
   );
