@@ -148,16 +148,15 @@ export default async function Home() {
         {/* Full Image Hero Background */}
         <div
           className="absolute inset-0 bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none"
-          style={{ backgroundImage: "url('/images/hero-banner.png')" }}
+          style={{ backgroundImage: "url('/images/hero/hero.png')" }}
         />
         {/* Subtle left gradient overlay for crisp readability across viewports */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#EEF4FE] via-[#EEF4FE]/90 to-transparent lg:via-[#EEF4FE]/70 lg:w-[55%] pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 lg:py-16 w-full">
           <div className="max-w-md lg:max-w-lg">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl lg:text-5xl leading-tight">
-              India&apos;s Structured Online<br />
-              Test Series Platform
+            <h1 className="text-3xl font-semibold tracking-tight text-[#0F172A] sm:text-4xl lg:text-5xl leading-tight">
+              Nagaland&apos;s Structured Online Test Series Platform
             </h1>
 
             <p className="mt-3 text-base text-[#64748B]">
