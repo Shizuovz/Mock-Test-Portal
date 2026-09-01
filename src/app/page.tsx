@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPublishedExamCatalog } from "@/lib/content/catalog";
-import { HeroIllustration } from "@/components/home/hero-illustration";
 
 export const dynamic = "force-dynamic";
 
@@ -81,7 +80,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A]">
-      {/* 1. Global Navigation Bar (Testbook-style clean navbar) */}
+      {/* 1. Global Navigation Bar */}
       <header className="sticky top-0 z-40 border-b border-[#E2E8F0] bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
           <div className="flex items-center gap-8">
@@ -163,105 +162,118 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* 2. Testbook-Style Hero Section (Asymmetric Two-Column with 3D Visual) */}
-      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-gradient-to-b from-white via-[#F8FAFC] to-[#F1F5F9] px-6 py-12 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-            {/* Left Column: Typography & Prominent Search */}
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#E2E8F0] bg-white px-3.5 py-1 text-xs font-semibold text-[#4F46E5] shadow-xs">
-                <span className="flex h-2 w-2 rounded-full bg-[#4F46E5] animate-ping" />
-                Nagaland & India&apos;s Dedicated Test Portal
-              </div>
+      {/* 2. Hero Section with User's Banner Background */}
+      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-[#F5F8FE] px-6 py-12 lg:py-20 min-h-[580px] flex items-center">
+        {/* Desktop Hero Background Illustration */}
+        <div
+          className="absolute inset-0 bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: "url('/images/hero-banner.png')" }}
+        />
+        {/* Soft gradient mask on the left for maximum text contrast across viewports */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F5F8FE] via-[#F5F8FE]/95 to-transparent lg:via-[#F5F8FE]/80 lg:w-[60%] pointer-events-none" />
 
-              <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
-                India&apos;s Structured Online{" "}
-                <span className="block text-[#4F46E5]">
-                  Test Series Platform
-                </span>
-              </h1>
-
-              <p className="mt-4 text-base leading-relaxed text-[#64748B] sm:text-lg">
-                Boost your exam preparation with Test Series for <strong>NSSB</strong>,{" "}
-                <strong>SSC</strong>, <strong>NPSC</strong> & All other State Govt. Exams.
-              </p>
-
-              <div className="mt-6 pt-2">
-                <p className="text-sm font-semibold text-[#0F172A]">
-                  814+ tests covered. Which exam are you preparing for?
-                </p>
-
-                {/* Big Search Input Form (like Testbook) */}
-                <form action="/exams" method="GET" className="relative mt-3 max-w-xl">
-                  <input
-                    type="text"
-                    name="q"
-                    placeholder="Search for your Exam (e.g. NSSB CGL, SSC Tier-I, NPSC Prelims)..."
-                    className="w-full rounded-2xl border border-[#E2E8F0] bg-white py-4 pl-5 pr-14 text-sm text-[#0F172A] shadow-md transition placeholder-[#64748B] focus:border-[#4F46E5] focus:outline-none focus:ring-4 focus:ring-[#EEF2FF]"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute inset-y-2 right-2 flex w-11 items-center justify-center rounded-xl bg-[#4F46E5] text-white shadow-xs transition hover:bg-[#4338CA]"
-                    aria-label="Search Exam"
-                  >
-                    🔍
-                  </button>
-                </form>
-
-                {/* Popular Keywords Pills */}
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
-                  <span className="font-semibold text-[#0F172A]">Popular:</span>
-                  {popularSearches.map((item) => (
-                    <Link
-                      key={item.label}
-                      href={`/exams?q=${encodeURIComponent(item.q)}`}
-                      className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1 font-medium text-[#64748B] shadow-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF] hover:text-[#4F46E5]"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Direct Action Buttons */}
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <Link
-                    href="/exams"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#4338CA] hover:shadow-lg"
-                  >
-                    Explore Test Series
-                    <span>➔</span>
-                  </Link>
-                  <Link
-                    href="/dashboard/tests"
-                    className="inline-flex items-center rounded-xl border border-[#E2E8F0] bg-white px-6 py-3.5 text-sm font-bold text-[#0F172A] shadow-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF]/30"
-                  >
-                    Start Free Mock Test
-                  </Link>
-                </div>
-              </div>
+        <div className="relative z-10 mx-auto max-w-7xl w-full">
+          <div className="max-w-xl lg:max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#E2E8F0] bg-white/90 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] shadow-xs backdrop-blur-xs">
+              <span className="flex h-2 w-2 rounded-full bg-[#4F46E5] animate-ping" />
+              Nagaland & India&apos;s Dedicated Test Portal
             </div>
 
-            {/* Right Column: Testbook-Style 3D Isometric Illustration */}
-            <div className="relative pt-6 lg:pt-0">
-              <HeroIllustration />
+            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
+              India&apos;s Structured Online{" "}
+              <span className="block text-[#4F46E5]">
+                Test Series Platform
+              </span>
+            </h1>
+
+            <p className="mt-4 text-base leading-relaxed text-[#64748B] sm:text-lg">
+              Boost your exam preparation with Test Series for <strong>NSSB</strong>,{" "}
+              <strong>SSC</strong>, <strong>NPSC</strong> & All other State Govt. Exams.
+            </p>
+
+            <div className="mt-6 pt-2">
+              <p className="text-sm font-semibold text-[#0F172A]">
+                814+ tests covered. Which exam are you preparing for?
+              </p>
+
+              {/* Big Search Input Form (like Testbook) */}
+              <form action="/exams" method="GET" className="relative mt-3 max-w-xl">
+                <input
+                  type="text"
+                  name="q"
+                  placeholder="Search for your Exam (e.g. NSSB CGL, SSC Tier-I, NPSC Prelims)..."
+                  className="w-full rounded-2xl border border-[#E2E8F0] bg-white py-4 pl-5 pr-14 text-sm text-[#0F172A] shadow-md transition placeholder-[#64748B] focus:border-[#4F46E5] focus:outline-none focus:ring-4 focus:ring-[#EEF2FF]"
+                />
+                <button
+                  type="submit"
+                  className="absolute inset-y-2 right-2 flex w-11 items-center justify-center rounded-xl bg-[#4F46E5] text-white shadow-xs transition hover:bg-[#4338CA]"
+                  aria-label="Search Exam"
+                >
+                  🔍
+                </button>
+              </form>
+
+              {/* Popular Keywords Pills */}
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
+                <span className="font-semibold text-[#0F172A]">Popular:</span>
+                {popularSearches.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={`/exams?q=${encodeURIComponent(item.q)}`}
+                    className="rounded-full border border-[#E2E8F0] bg-white/90 px-3 py-1 font-medium text-[#64748B] shadow-xs backdrop-blur-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF] hover:text-[#4F46E5]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Direct Action Buttons */}
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/exams"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#4338CA] hover:shadow-lg"
+                >
+                  Explore Test Series
+                  <span>➔</span>
+                </Link>
+                <Link
+                  href="/dashboard/tests"
+                  className="inline-flex items-center rounded-xl border border-[#E2E8F0] bg-white px-6 py-3.5 text-sm font-bold text-[#0F172A] shadow-xs transition hover:border-[#4F46E5] hover:bg-[#EEF2FF]/30"
+                >
+                  Start Free Mock Test
+                </Link>
+              </div>
+
+              {/* Visual Feature Highlights matching the background graphics */}
+              <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#64748B]">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
+                  📈 <span>Score Growth Analytics</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
+                  🎯 <span>Real-Time Negative Marking</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/80 border border-[#E2E8F0] px-3 py-1.5 shadow-2xs backdrop-blur-xs">
+                  📅 <span>Exam Schedule Tracker</span>
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Quick Exam Metrics Ribbon */}
-          <div className="mt-16 grid grid-cols-2 gap-4 border-t border-[#E2E8F0] pt-8 sm:grid-cols-4">
-            <div>
+          <div className="mt-14 grid grid-cols-2 gap-4 border-t border-[#E2E8F0]/80 pt-8 sm:grid-cols-4 max-w-4xl">
+            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
               <p className="text-2xl font-extrabold text-[#4F46E5]">NSSB & NPSC</p>
               <p className="text-xs font-medium text-[#64748B]">State Exam Aligned</p>
             </div>
-            <div>
+            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
               <p className="text-2xl font-extrabold text-[#4F46E5]">SSC CGL/CHSL</p>
               <p className="text-xs font-medium text-[#64748B]">National Tier Simulations</p>
             </div>
-            <div>
+            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
               <p className="text-2xl font-extrabold text-[#16A34A]">&plusmn; Exact</p>
               <p className="text-xs font-medium text-[#64748B]">Negative Marking Logic</p>
             </div>
-            <div>
+            <div className="rounded-xl bg-white/85 border border-[#E2E8F0] p-3 shadow-2xs backdrop-blur-xs">
               <p className="text-2xl font-extrabold text-[#4F46E5]">KaTeX</p>
               <p className="text-xs font-medium text-[#64748B]">Formula & Math Clarity</p>
             </div>
@@ -413,7 +425,7 @@ export default async function Home() {
           </div>
           <Link
             href="/dashboard/tests"
-            className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-[#4F46E5] shadow-md transition hover:bg-[#EEF2FF]"
+            className="rounded-xl bg-[#4F46E5] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#4338CA]"
           >
             Launch Mock Test ➔
           </Link>
