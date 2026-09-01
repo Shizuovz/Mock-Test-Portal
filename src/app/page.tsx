@@ -143,70 +143,60 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* 2. Clean, Simple Hero Section (Exact Layout of Reference Image) */}
-      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-white px-6 py-12 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-10 lg:grid-cols-2">
-            {/* Left Column: Simple Headline, Subtitle, Prompt & Search Bar */}
-            <div className="max-w-xl">
-              <h1 className="text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem] leading-[1.18]">
-                India&apos;s Structured Online Test<br />
-                <span className="text-[#0F172A]">series platform</span>
-              </h1>
+      {/* 2. Minimal Hero Section with User's Banner Background */}
+      <section className="relative overflow-hidden border-b border-[#E2E8F0] bg-[#EEF4FE] min-h-[460px] lg:min-h-[520px] flex items-center">
+        {/* Full Image Hero Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: "url('/images/hero-banner.png')" }}
+        />
+        {/* Subtle left gradient overlay for crisp readability across viewports */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#EEF4FE] via-[#EEF4FE]/90 to-transparent lg:via-[#EEF4FE]/70 lg:w-[55%] pointer-events-none" />
 
-              <p className="mt-5 text-base sm:text-lg text-[#64748B] leading-relaxed">
-                Boost your exam preparation with Test Series for Banking, SSC, RRB, NSSB, NPSC &amp; All other Govt. Exams
-              </p>
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 lg:py-16 w-full">
+          <div className="max-w-md lg:max-w-lg">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl lg:text-5xl leading-tight">
+              India&apos;s Structured Online<br />
+              Test Series Platform
+            </h1>
 
-              <div className="mt-10">
-                <p className="text-sm font-semibold text-[#0F172A]">
-                  814+ exams covered. Which exam are you preparing for?
-                </p>
+            <p className="mt-3 text-base text-[#64748B]">
+              Practice timed mock tests for NSSB, SSC &amp; NPSC exams.
+            </p>
 
-                {/* Clean, Simple Search Bar matching Reference */}
-                <form action="/exams" method="GET" className="relative mt-3 max-w-xl">
-                  <input
-                    type="text"
-                    name="q"
-                    placeholder="Search for your Exam"
-                    className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3.5 pl-5 pr-12 text-sm text-[#0F172A] placeholder-[#94A3B8] shadow-xs transition focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#94A3B8] hover:text-[#4F46E5] transition"
-                    aria-label="Search for Exam"
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            {/* Right Column: Clean Illustration & Support Bubble */}
-            <div className="relative flex items-center justify-center lg:justify-end">
-              <img
-                src="/images/hero-student.png"
-                alt="Structured Online Test Series Platform"
-                className="w-full max-w-md lg:max-w-lg h-auto object-contain"
+            {/* Minimal Search Bar */}
+            <form action="/exams" method="GET" className="relative mt-6 max-w-md">
+              <input
+                type="text"
+                name="q"
+                placeholder="Search for your Exam"
+                className="w-full rounded-xl border border-[#E2E8F0] bg-white py-3 pl-4 pr-12 text-sm text-[#0F172A] placeholder-[#94A3B8] shadow-xs transition focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
               />
-
-              {/* Floating WhatsApp Quick Support Bubble (From Reference Image) */}
-              <a
-                href="https://wa.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Student Support & Exam Queries"
-                className="absolute -bottom-2 right-2 lg:right-0 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110"
+              <button
+                type="submit"
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-[#94A3B8] hover:text-[#4F46E5] transition"
+                aria-label="Search Exam"
               >
-                <svg className="h-7 w-7 fill-current" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-              </a>
-            </div>
+              </button>
+            </form>
           </div>
         </div>
+
+        {/* Floating WhatsApp Quick Support Bubble */}
+        <a
+          href="https://wa.me/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Student Support & Exam Queries"
+          className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110"
+        >
+          <svg className="h-7 w-7 fill-current" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+          </svg>
+        </a>
       </section>
 
       {/* 3. Core Target Exam Series */}
