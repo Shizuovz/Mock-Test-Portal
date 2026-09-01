@@ -414,7 +414,12 @@ export async function createTest(formData: FormData) {
 
   let { error } = await db.from("tests").insert(insertPayload);
 
-  if (error && error.message.includes("does not exist")) {
+  if (
+    error &&
+    (error.code === "PGRST204" ||
+      error.message.includes("does not exist") ||
+      error.message.includes("Could not find the"))
+  ) {
     delete insertPayload.max_attempts;
     delete insertPayload.score_display_mode;
     const retry = await db.from("tests").insert(insertPayload);
@@ -463,7 +468,12 @@ export async function updateTest(formData: FormData) {
     .update(updatePayload)
     .eq("id", parsed.data.id);
 
-  if (error && error.message.includes("does not exist")) {
+  if (
+    error &&
+    (error.code === "PGRST204" ||
+      error.message.includes("does not exist") ||
+      error.message.includes("Could not find the"))
+  ) {
     delete updatePayload.max_attempts;
     delete updatePayload.score_display_mode;
     const retry = await db

@@ -68,7 +68,12 @@ export async function getAvailableTests(
     .eq("is_published", true)
     .order("created_at", { ascending: false });
 
-  if (testError && testError.message.includes("does not exist")) {
+  if (
+    testError &&
+    (testError.code === "PGRST204" ||
+      testError.message.includes("does not exist") ||
+      testError.message.includes("Could not find the"))
+  ) {
     const retry = await db
       .from("tests")
       .select(`

@@ -36,19 +36,28 @@ test.describe("Authenticated Student Test Journey", () => {
 
     const { data } = await supabase.auth.admin.listUsers();
     const existing = data?.users.find((u) => u.email === TEST_EMAIL);
-
+    let userId = existing?.id;
     if (existing) {
       await supabase.auth.admin.updateUserById(existing.id, {
         password: TEST_PASSWORD,
         email_confirm: true,
       });
     } else {
-      await supabase.auth.admin.createUser({
+      const created = await supabase.auth.admin.createUser({
         email: TEST_EMAIL,
         password: TEST_PASSWORD,
         email_confirm: true,
         user_metadata: { full_name: "E2E Test Student" },
       });
+      userId = created.data.user?.id;
+    }
+
+    if (userId) {
+      await supabase
+        .from("test_attempts")
+        .delete()
+        .eq("user_id", userId)
+        .eq("test_id", TEST_ID);
     }
   });
 

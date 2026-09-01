@@ -31,7 +31,12 @@ export async function startAttempt(input: unknown) {
     .eq("is_published", true)
     .single();
 
-  if (testError && testError.message.includes("does not exist")) {
+  if (
+    testError &&
+    (testError.code === "PGRST204" ||
+      testError.message.includes("does not exist") ||
+      testError.message.includes("Could not find the"))
+  ) {
     const retry = await db
       .from("tests")
       .select("id, name, duration_minutes, is_published")

@@ -125,7 +125,12 @@ async function getReviewQuestions(
     .select("question_id, selected_option_id, time_spent_seconds")
     .eq("attempt_id", attemptId);
 
-  if (answersError && answersError.message.includes("does not exist")) {
+  if (
+    answersError &&
+    (answersError.code === "PGRST204" ||
+      answersError.message.includes("does not exist") ||
+      answersError.message.includes("Could not find the"))
+  ) {
     const retry = await supabase
       .from("user_answers")
       .select("question_id, selected_option_id")

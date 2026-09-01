@@ -83,7 +83,12 @@ export async function saveAnswer(input: unknown) {
     { onConflict: "attempt_id,question_id" },
   );
 
-  if (saveError && saveError.message.includes("does not exist")) {
+  if (
+    saveError &&
+    (saveError.code === "PGRST204" ||
+      saveError.message.includes("does not exist") ||
+      saveError.message.includes("Could not find the"))
+  ) {
     delete upsertPayload.time_spent_seconds;
     const retry = await db.from("user_answers").upsert(
       upsertPayload,

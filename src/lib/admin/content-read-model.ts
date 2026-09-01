@@ -365,7 +365,12 @@ export async function getAdminTests(): Promise<AdminTestRow[]> {
     )
     .order("created_at", { ascending: false });
 
-  if (error && error.message.includes("does not exist")) {
+  if (
+    error &&
+    (error.code === "PGRST204" ||
+      error.message.includes("does not exist") ||
+      error.message.includes("Could not find the"))
+  ) {
     const retry = await db
       .from("tests")
       .select(
