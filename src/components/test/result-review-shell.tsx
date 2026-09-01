@@ -5,6 +5,11 @@ import { useState, useSyncExternalStore } from "react";
 import type { ScoreResult } from "@/lib/scoring/types";
 import { BookmarkButton } from "./bookmark-button";
 import { MathText } from "@/components/ui/math-text";
+import { PacingBarChart } from "./pacing-bar-chart";
+import {
+  calculatePacingAnalytics,
+  type PacingQuestionItem,
+} from "@/lib/test-engine/pacing";
 
 type ReviewQuestion = {
   questionId: string;
@@ -83,42 +88,33 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
   const wrongCount = payload.review.filter((q) => q.selectedOptionId !== null && !q.isCorrect).length;
   const unansweredCount = payload.review.filter((q) => q.selectedOptionId === null).length;
 
-  // Pacing Diagnostics
-  const totalQuestions = payload.review.length;
-  const questionsWithTime = payload.review.map((q, idx) => ({
-    ...q,
+  // Pacing Diagnostics & Analytics
+  const pacingQuestions: PacingQuestionItem[] = payload.review.map((q, idx) => ({
+    questionId: q.questionId,
     index: idx + 1,
-    time: q.timeSpentSeconds ?? payload.questionTimeSpent?.[q.questionId] ?? 0,
+    timeSpentSeconds: q.timeSpentSeconds ?? payload.questionTimeSpent?.[q.questionId] ?? 0,
+    isCorrect: q.isCorrect,
+    isAnswered: q.selectedOptionId !== null,
+    questionText: q.questionText,
   }));
 
-  const totalTrackedSeconds = questionsWithTime.reduce((sum, q) => sum + q.time, 0);
+  const pacingAnalytics = calculatePacingAnalytics(pacingQuestions);
+  const totalQuestions = pacingAnalytics.totalQuestions;
   const effectiveTotalSeconds =
     payload.timeTakenSeconds && payload.timeTakenSeconds > 0
       ? payload.timeTakenSeconds
-      : totalTrackedSeconds;
-
-  const avgSecondsPerQuestion =
-    totalQuestions > 0 ? Math.round(effectiveTotalSeconds / totalQuestions) : 0;
-
-  const correctQuestions = questionsWithTime.filter((q) => q.isCorrect);
-  const wrongQuestions = questionsWithTime.filter(
-    (q) => q.selectedOptionId !== null && !q.isCorrect,
-  );
-
-  const avgCorrectSeconds =
-    correctQuestions.length > 0
-      ? Math.round(correctQuestions.reduce((sum, q) => sum + q.time, 0) / correctQuestions.length)
-      : 0;
-
-  const avgWrongSeconds =
-    wrongQuestions.length > 0
-      ? Math.round(wrongQuestions.reduce((sum, q) => sum + q.time, 0) / wrongQuestions.length)
-      : 0;
-
-  const answeredWithTime = questionsWithTime.filter((q) => q.time > 0);
-  const sortedByTime = [...answeredWithTime].sort((a, b) => a.time - b.time);
-  const fastest = sortedByTime[0] ?? null;
-  const slowest = sortedByTime[sortedByTime.length - 1] ?? null;
+      : pacingAnalytics.totalTimeSeconds;
+  const avgSecondsPerQuestion = pacingAnalytics.averageSecondsPerQuestion;
+  const avgCorrectSeconds = pacingAnalytics.averageCorrectSeconds;
+  const avgWrongSeconds = pacingAnalytics.averageWrongSeconds;
+  const fastest = pacingAnalytics.fastestQuestion
+    ? { index: pacingAnalytics.fastestQuestion.index, time: pacingAnalytics.fastestQuestion.timeSpentSeconds }
+    : null;
+  const slowest = pacingAnalytics.slowestQuestion
+    ? { index: pacingAnalytics.slowestQuestion.index, time: pacingAnalytics.slowestQuestion.timeSpentSeconds }
+    : null;
+  const timeTrapIds = new Set(pacingAnalytics.timeTraps.map((t) => t.questionId));
+  const quickWinIds = new Set(pacingAnalytics.quickWins.map((w) => w.questionId));
 
   const filteredQuestions = payload.review.filter((question) => {
     if (filter === "correct") return question.isCorrect;
@@ -217,13 +213,13 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
             <div className="rounded border border-[#d9dee7] bg-[#fbfcfb] p-3">
               <span className="text-xs font-semibold uppercase text-[#146b5f]">Avg on Correct Qs</span>
               <p className="mt-1 text-xl font-bold text-[#146b5f]">{formatDuration(avgCorrectSeconds)}</p>
-              <p className="text-[11px] text-[#667085]">{correctQuestions.length} correct responses</p>
+              <p className="text-[11px] text-[#667085]">{correctCount} correct responses</p>
             </div>
 
             <div className="rounded border border-[#d9dee7] bg-[#fbfcfb] p-3">
               <span className="text-xs font-semibold uppercase text-[#a3412f]">Avg on Wrong Qs</span>
               <p className="mt-1 text-xl font-bold text-[#a3412f]">{formatDuration(avgWrongSeconds)}</p>
-              <p className="text-[11px] text-[#667085]">{wrongQuestions.length} incorrect responses</p>
+              <p className="text-[11px] text-[#667085]">{wrongCount} incorrect responses</p>
             </div>
 
             <div className="rounded border border-[#d9dee7] bg-[#fbfcfb] p-3">
@@ -235,6 +231,11 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
                 🐢 Slowest: {slowest ? `Q${slowest.index} (${formatDuration(slowest.time)})` : "--"}
               </p>
             </div>
+          </div>
+
+          {/* Visual Time-Spent-Per-Question Breakdown Chart */}
+          <div className="mt-6 border-t border-[#f0f2f5] pt-5 print:hidden">
+            <PacingBarChart analytics={pacingAnalytics} questions={pacingQuestions} />
           </div>
         </section>
 
@@ -303,13 +304,24 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
               return (
                 <article
                   key={question.questionId}
-                  className="print-avoid-break border border-[#ccd8d4] bg-[#fbfcfb] p-5 print:border-gray-400 print:bg-white print:p-4 print:mb-3"
+                  id={`review-question-${question.questionId}`}
+                  className="print-avoid-break border border-[#ccd8d4] bg-[#fbfcfb] p-5 print:border-gray-400 print:bg-white print:p-4 print:mb-3 scroll-mt-20 transition-shadow"
                 >
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <h2 className="max-w-3xl text-lg font-semibold leading-7 print:text-base">
                       {originalIndex}. <MathText text={question.questionText} />
                     </h2>
                     <div className="flex flex-wrap items-center gap-2">
+                      {timeTrapIds.has(question.questionId) && (
+                        <span className="inline-flex items-center gap-1 rounded bg-[#fee4e2] px-2.5 py-1 text-xs font-semibold text-[#b42318] print:hidden">
+                          ⚠️ Time Trap
+                        </span>
+                      )}
+                      {quickWinIds.has(question.questionId) && (
+                        <span className="inline-flex items-center gap-1 rounded bg-[#d1fadf] px-2.5 py-1 text-xs font-semibold text-[#027a48] print:hidden">
+                          ⚡ Quick Win
+                        </span>
+                      )}
                       {questionTime > 0 && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-[#ccd8d4] bg-white px-2.5 py-1 text-xs font-semibold text-[#475467] print:text-[10px]">
                           ⏱️ {formatDuration(questionTime)}
