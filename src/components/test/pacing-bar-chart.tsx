@@ -44,9 +44,9 @@ export function PacingBarChart({
       const element = document.getElementById(`review-question-${questionId}`);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
-        element.classList.add("ring-2", "ring-[#146b5f]", "transition-all");
+        element.classList.add("ring-2", "ring-[#4F46E5]", "transition-all");
         setTimeout(() => {
-          element.classList.remove("ring-2", "ring-[#146b5f]");
+          element.classList.remove("ring-2", "ring-[#4F46E5]");
         }, 2000);
       }
     }
@@ -64,31 +64,31 @@ export function PacingBarChart({
   return (
     <div className="space-y-6">
       {/* 1. Time Allocation & Efficiency Summary Bar */}
-      <div className="rounded-lg border border-[#e4e7ec] bg-[#fbfcfb] p-4">
+      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#475467]">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
             Time Investment Distribution
           </span>
-          <span className="text-xs text-[#667085]">
-            Total Time: <strong className="text-[#15171a]">{formatTime(analytics.totalTimeSeconds)}</strong>
+          <span className="text-xs text-[#64748B]">
+            Total Time: <strong className="text-[#0F172A]">{formatTime(analytics.totalTimeSeconds)}</strong>
           </span>
         </div>
 
         {/* Multi-segment progress bar */}
-        <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-[#eaecf0]">
+        <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-[#F1F5F9]">
           <div
             style={{ width: `${analytics.timeDistribution.correctPercentage}%` }}
-            className="bg-[#146b5f] transition-all"
+            className="bg-[#16A34A] transition-all"
             title={`Correct: ${formatTime(analytics.timeDistribution.correctSeconds)} (${analytics.timeDistribution.correctPercentage}%)`}
           />
           <div
             style={{ width: `${analytics.timeDistribution.wrongPercentage}%` }}
-            className="bg-[#a3412f] transition-all"
+            className="bg-[#DC2626] transition-all"
             title={`Wrong: ${formatTime(analytics.timeDistribution.wrongSeconds)} (${analytics.timeDistribution.wrongPercentage}%)`}
           />
           <div
             style={{ width: `${analytics.timeDistribution.unansweredPercentage}%` }}
-            className="bg-[#98a2b3] transition-all"
+            className="bg-[#CBD5E1] transition-all"
             title={`Unanswered: ${formatTime(analytics.timeDistribution.unansweredSeconds)} (${analytics.timeDistribution.unansweredPercentage}%)`}
           />
         </div>
@@ -96,20 +96,20 @@ export function PacingBarChart({
         {/* Legend for the progress bar */}
         <div className="mt-3 flex flex-wrap items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#146b5f]" />
-            <span className="text-[#344054]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#16A34A]" />
+            <span className="text-[#0F172A]">
               Productive Time: <strong>{analytics.timeDistribution.correctPercentage}%</strong> ({formatTime(analytics.timeDistribution.correctSeconds)})
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#a3412f]" />
-            <span className="text-[#344054]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#DC2626]" />
+            <span className="text-[#0F172A]">
               Lost Time (Traps): <strong>{analytics.timeDistribution.wrongPercentage}%</strong> ({formatTime(analytics.timeDistribution.wrongSeconds)})
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#98a2b3]" />
-            <span className="text-[#344054]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#CBD5E1]" />
+            <span className="text-[#64748B]">
               Indecision Time: <strong>{analytics.timeDistribution.unansweredPercentage}%</strong> ({formatTime(analytics.timeDistribution.unansweredSeconds)})
             </span>
           </div>
@@ -121,14 +121,14 @@ export function PacingBarChart({
         <div className="grid gap-3 sm:grid-cols-2">
           {/* Time Traps */}
           {analytics.timeTraps.length > 0 && (
-            <div className="rounded-lg border border-[#fecdca] bg-[#fffbfa] p-3.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#b42318]">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#fee4e2] text-xs">
+            <div className="rounded-xl border border-[#FECACA] bg-[#FEF2F2] p-4">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#DC2626]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs shadow-xs">
                   ⚠️
                 </span>
                 <span>{analytics.timeTraps.length} Time Trap{analytics.timeTraps.length === 1 ? "" : "s"} Detected</span>
               </div>
-              <p className="mt-1 text-xs text-[#7a271a]">
+              <p className="mt-1 text-xs text-[#DC2626]/90">
                 High time investment with incorrect outcome. Jump to solution:
               </p>
               <div className="mt-2.5 flex flex-wrap gap-1.5">
@@ -137,7 +137,7 @@ export function PacingBarChart({
                     key={trap.questionId}
                     type="button"
                     onClick={() => handleBarClick(trap.questionId)}
-                    className="inline-flex items-center gap-1 rounded bg-[#fee4e2] px-2 py-0.5 text-xs font-semibold text-[#b42318] transition hover:bg-[#fecdca]"
+                    className="inline-flex items-center gap-1 rounded bg-white px-2 py-0.5 text-xs font-semibold text-[#DC2626] border border-[#FECACA] shadow-xs transition hover:bg-[#FEE2E2]"
                   >
                     Q{trap.index} ({formatTime(trap.timeSpentSeconds)})
                   </button>
@@ -148,14 +148,14 @@ export function PacingBarChart({
 
           {/* Quick Wins */}
           {analytics.quickWins.length > 0 && (
-            <div className="rounded-lg border border-[#a6f4c5] bg-[#f6fef9] p-3.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#027a48]">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d1fadf] text-xs">
+            <div className="rounded-xl border border-[#BBF7D0] bg-[#DCFCE7] p-4">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#16A34A]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs shadow-xs">
                   ⚡
                 </span>
                 <span>{analytics.quickWins.length} Quick Win{analytics.quickWins.length === 1 ? "" : "s"} Detected</span>
               </div>
-              <p className="mt-1 text-xs text-[#05603a]">
+              <p className="mt-1 text-xs text-[#16A34A]/90">
                 Fast and accurate responses (high efficiency):
               </p>
               <div className="mt-2.5 flex flex-wrap gap-1.5">
@@ -164,7 +164,7 @@ export function PacingBarChart({
                     key={win.questionId}
                     type="button"
                     onClick={() => handleBarClick(win.questionId)}
-                    className="inline-flex items-center gap-1 rounded bg-[#d1fadf] px-2 py-0.5 text-xs font-semibold text-[#027a48] transition hover:bg-[#a6f4c5]"
+                    className="inline-flex items-center gap-1 rounded bg-white px-2 py-0.5 text-xs font-semibold text-[#16A34A] border border-[#BBF7D0] shadow-xs transition hover:bg-[#BBF7D0]"
                   >
                     Q{win.index} ({formatTime(win.timeSpentSeconds)})
                   </button>
@@ -176,25 +176,25 @@ export function PacingBarChart({
       )}
 
       {/* 3. Interactive Question-by-Question Pacing Bar Chart */}
-      <div className="rounded-lg border border-[#e4e7ec] bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-sm font-bold text-[#15171a]">
+            <h3 className="text-sm font-bold text-[#0F172A]">
               Pacing Timeline (Click any bar to jump to solution)
             </h3>
-            <p className="text-xs text-[#667085]">
+            <p className="text-xs text-[#64748B]">
               Height represents time spent on each question.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-sm bg-[#146b5f]" /> Correct
+              <span className="h-3 w-3 rounded-sm bg-[#16A34A]" /> Correct
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-sm bg-[#a3412f]" /> Wrong
+              <span className="h-3 w-3 rounded-sm bg-[#DC2626]" /> Wrong
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-sm bg-[#98a2b3]" /> Unanswered
+              <span className="h-3 w-3 rounded-sm bg-[#CBD5E1]" /> Unanswered
             </span>
           </div>
         </div>
@@ -205,21 +205,21 @@ export function PacingBarChart({
           {targetPercent > 0 && targetPercent < 100 && (
             <div
               style={{ bottom: `${targetPercent}%` }}
-              className="absolute left-0 right-0 z-0 flex items-center border-b border-dashed border-[#b54708] pointer-events-none"
+              className="absolute left-0 right-0 z-0 flex items-center border-b border-dashed border-[#4F46E5] pointer-events-none"
             >
-              <span className="rounded bg-[#fffaeb] px-1.5 py-0.5 text-[10px] font-bold text-[#b54708] shadow-sm">
+              <span className="rounded bg-[#EEF2FF] px-1.5 py-0.5 text-[10px] font-bold text-[#4F46E5] shadow-xs">
                 Target: {formatTime(analytics.targetSecondsPerQuestion)}
               </span>
             </div>
           )}
 
-          {/* Average Benchmark Line (if significantly different from target) */}
+          {/* Average Benchmark Line */}
           {Math.abs(avgPercent - targetPercent) > 10 && avgPercent > 0 && (
             <div
               style={{ bottom: `${avgPercent}%` }}
-              className="absolute left-0 right-0 z-0 flex items-center border-b border-dotted border-[#475467] pointer-events-none"
+              className="absolute left-0 right-0 z-0 flex items-center border-b border-dotted border-[#64748B] pointer-events-none"
             >
-              <span className="rounded bg-[#f2f4f7] px-1.5 py-0.5 text-[10px] font-medium text-[#475467] shadow-sm">
+              <span className="rounded bg-[#F8FAFC] px-1.5 py-0.5 text-[10px] font-medium text-[#64748B] shadow-xs">
                 Avg: {formatTime(analytics.averageSecondsPerQuestion)}
               </span>
             </div>
@@ -235,11 +235,11 @@ export function PacingBarChart({
               const isTrap = timeTrapIds.has(q.questionId);
               const isWin = quickWinIds.has(q.questionId);
 
-              let barBg = "bg-[#98a2b3] hover:bg-[#667085]"; // unanswered
+              let barBg = "bg-[#CBD5E1] hover:bg-[#94A3B8]"; // unanswered
               if (q.isCorrect) {
-                barBg = "bg-[#146b5f] hover:bg-[#0f544a]";
+                barBg = "bg-[#16A34A] hover:bg-[#15803D]";
               } else if (q.isAnswered) {
-                barBg = "bg-[#a3412f] hover:bg-[#853123]";
+                barBg = "bg-[#DC2626] hover:bg-[#B91C1C]";
               }
 
               return (
@@ -265,7 +265,7 @@ export function PacingBarChart({
                     style={{ height: `${heightPercent}%` }}
                     className={`w-full max-w-[48px] rounded-t-md transition-all duration-200 cursor-pointer ${barBg} ${
                       hoveredQuestion?.questionId === q.questionId
-                        ? "ring-2 ring-offset-1 ring-[#15171a]"
+                        ? "ring-2 ring-offset-1 ring-[#0F172A]"
                         : ""
                     }`}
                   >
@@ -275,10 +275,10 @@ export function PacingBarChart({
                   </button>
 
                   {/* Question Index Label */}
-                  <span className="mt-2 text-xs font-semibold text-[#475467]">
+                  <span className="mt-2 text-xs font-semibold text-[#0F172A]">
                     Q{q.index}
                   </span>
-                  <span className="text-[10px] text-[#98a2b3]">
+                  <span className="text-[10px] text-[#64748B]">
                     {formatTime(q.timeSpentSeconds)}
                   </span>
                 </div>
@@ -289,18 +289,18 @@ export function PacingBarChart({
 
         {/* Hovered Question Detail Card */}
         {hoveredQuestion && (
-          <div className="mt-3 rounded border border-[#eaecf0] bg-[#f8f9fa] p-2.5 text-xs text-[#344054] flex items-center justify-between">
+          <div className="mt-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-2.5 text-xs text-[#0F172A] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <strong className="text-[#15171a]">Question {hoveredQuestion.index}:</strong>
+              <strong className="text-[#0F172A]">Question {hoveredQuestion.index}:</strong>
               <span>
                 Status:{" "}
                 <span
                   className={`font-semibold ${
                     hoveredQuestion.isCorrect
-                      ? "text-[#146b5f]"
+                      ? "text-[#16A34A]"
                       : hoveredQuestion.isAnswered
-                      ? "text-[#a3412f]"
-                      : "text-[#765a22]"
+                      ? "text-[#DC2626]"
+                      : "text-[#F59E0B]"
                   }`}
                 >
                   {hoveredQuestion.isCorrect ? "✓ Correct" : hoveredQuestion.isAnswered ? "✕ Incorrect" : "○ Unanswered"}
@@ -309,12 +309,12 @@ export function PacingBarChart({
               <span>•</span>
               <span>Time Spent: <strong>{formatTime(hoveredQuestion.timeSpentSeconds)}</strong></span>
               {hoveredQuestion.timeSpentSeconds > analytics.averageSecondsPerQuestion && (
-                <span className="text-[#b54708]">
+                <span className="text-[#F59E0B]">
                   (+{formatTime(hoveredQuestion.timeSpentSeconds - analytics.averageSecondsPerQuestion)} above avg)
                 </span>
               )}
             </div>
-            <span className="text-[#146b5f] font-medium underline cursor-pointer">
+            <span className="text-[#4F46E5] font-medium underline cursor-pointer">
               Click to view question & solution →
             </span>
           </div>

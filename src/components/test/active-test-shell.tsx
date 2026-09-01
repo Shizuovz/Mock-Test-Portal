@@ -404,34 +404,34 @@ export function ActiveTestShell({
   }
 
   return (
-    <main className="min-h-screen select-none bg-[#f4f6f5] px-4 py-5 text-[#15171a] sm:px-6">
+    <main className="min-h-screen select-none bg-[#F8FAFC] px-4 py-5 text-[#0F172A] sm:px-6">
       {/* 1. Strike 1 & 2 Blocking Modal */}
       {activeViolationModal && !isDisqualified && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-xl border-2 border-[#b42318] bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-xl border-2 border-[#DC2626] bg-white p-6 shadow-2xl">
             <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fef3f2] text-2xl text-[#b42318]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FEF2F2] text-2xl text-[#DC2626]">
                 ⚠️
               </span>
               <div>
-                <h2 className="text-xl font-bold text-[#b42318]">
+                <h2 className="text-xl font-bold text-[#DC2626]">
                   Proctoring Warning {activeViolationModal.strike} of {MAX_ALLOWED_VIOLATIONS}
                 </h2>
-                <p className="text-xs font-semibold text-[#667085]">
+                <p className="text-xs font-semibold text-[#64748B]">
                   Strict Exam Integrity Rule
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg bg-[#fef3f2] p-4 text-sm text-[#b42318]">
+            <div className="mt-4 rounded-lg bg-[#FEF2F2] p-4 text-sm text-[#DC2626]">
               <p className="font-semibold">Detected Action:</p>
               <p className="mt-1">{activeViolationModal.reason}</p>
             </div>
 
-            <div className="mt-4 space-y-2 text-sm text-[#475467]">
+            <div className="mt-4 space-y-2 text-sm text-[#64748B]">
               <p>
                 You have{" "}
-                <strong className="text-[#b42318]">
+                <strong className="text-[#DC2626]">
                   {MAX_ALLOWED_VIOLATIONS - activeViolationModal.strike} warning(s)
                 </strong>{" "}
                 remaining.
@@ -439,7 +439,7 @@ export function ActiveTestShell({
               <p>
                 Switching tabs, minimizing the browser, or leaving the examination window{" "}
                 {MAX_ALLOWED_VIOLATIONS - activeViolationModal.strike === 1 ? (
-                  <strong className="text-[#b42318]">one more time will immediately terminate and auto-submit your test</strong>
+                  <strong className="text-[#DC2626]">one more time will immediately terminate and auto-submit your test</strong>
                 ) : (
                   "again will result in immediate disqualification"
                 )}
@@ -456,7 +456,7 @@ export function ActiveTestShell({
                     document.documentElement.requestFullscreen().catch(() => {});
                   }
                 }}
-                className="w-full rounded-lg bg-[#146b5f] py-3 text-center text-sm font-bold text-white shadow transition hover:bg-[#0f544a]"
+                className="w-full rounded-lg bg-[#4F46E5] py-3 text-center text-sm font-bold text-white shadow transition hover:bg-[#4338CA]"
               >
                 I Understand — Resume Examination
               </button>
@@ -468,23 +468,23 @@ export function ActiveTestShell({
       {/* 2. Strike 3 Disqualification Modal */}
       {isDisqualified && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
-          <div className="w-full max-w-lg rounded-xl border-2 border-[#b42318] bg-white p-6 text-center shadow-2xl">
-            <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#fef3f2] text-3xl text-[#b42318]">
+          <div className="w-full max-w-lg rounded-xl border-2 border-[#DC2626] bg-white p-6 text-center shadow-2xl">
+            <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#FEF2F2] text-3xl text-[#DC2626]">
               ⛔
             </span>
-            <h2 className="mt-4 text-2xl font-bold text-[#b42318]">
+            <h2 className="mt-4 text-2xl font-bold text-[#DC2626]">
               Exam Terminated: Disqualified
             </h2>
-            <p className="mt-3 text-sm text-[#475467]">
+            <p className="mt-3 text-sm text-[#64748B]">
               You exceeded the maximum allowed limit of {MAX_ALLOWED_VIOLATIONS} proctoring violations
               (tab switching / window unfocusing).
             </p>
-            <p className="mt-2 text-xs font-semibold text-[#667085]">
+            <p className="mt-2 text-xs font-semibold text-[#64748B]">
               Your test has been automatically submitted to the server. Processing your score...
             </p>
             <div className="mt-6">
-              <div className="mx-auto h-2 w-32 overflow-hidden rounded-full bg-[#fee4e2]">
-                <div className="h-full w-full animate-pulse bg-[#b42318]" />
+              <div className="mx-auto h-2 w-32 overflow-hidden rounded-full bg-[#FEE2E2]">
+                <div className="h-full w-full animate-pulse bg-[#DC2626]" />
               </div>
             </div>
           </div>
@@ -494,34 +494,34 @@ export function ActiveTestShell({
       {/* Question Paper Overview Modal */}
       {showQuestionPaperModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-          <div className="flex h-[80vh] w-full max-w-3xl flex-col rounded-xl border border-[#ccd8d4] bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0] px-6 py-4">
+          <div className="flex h-[80vh] w-full max-w-3xl flex-col rounded-xl border border-[#E2E8F0] bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-6 py-4">
               <div>
-                <h3 className="text-lg font-bold text-[#15171a]">Full Question Paper Preview</h3>
-                <p className="text-xs text-[#667085]">{testName} &bull; {questions.length} Questions</p>
+                <h3 className="text-lg font-bold text-[#0F172A]">Full Question Paper Preview</h3>
+                <p className="text-xs text-[#64748B]">{testName} &bull; {questions.length} Questions</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowQuestionPaperModal(false)}
-                className="rounded-lg p-2 text-sm font-bold text-[#667085] hover:bg-[#f4f6f5] hover:text-[#15171a]"
+                className="rounded-lg p-2 text-sm font-bold text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]"
               >
                 ✕ Close
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {questions.map((q, qIdx) => (
-                <div key={q.id} className="rounded-lg border border-[#e2e8f0] p-4 bg-[#fbfcfb]">
+                <div key={q.id} className="rounded-lg border border-[#E2E8F0] p-4 bg-[#F8FAFC]">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-xs text-[#146b5f]">Q{qIdx + 1}.</span>
-                    <span className="text-[11px] font-medium text-[#667085]">+{q.marks} Marks</span>
+                    <span className="font-bold text-xs text-[#4F46E5]">Q{qIdx + 1}.</span>
+                    <span className="text-[11px] font-medium text-[#64748B]">+{q.marks} Marks</span>
                   </div>
-                  <div className="mt-2 text-sm font-medium text-[#15171a]">
+                  <div className="mt-2 text-sm font-medium text-[#0F172A]">
                     <MathText text={q.questionText} />
                   </div>
                   <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
                     {q.options.map((opt, oIdx) => (
-                      <div key={opt.id} className="flex items-center gap-2 text-xs text-[#475467] rounded border border-[#eef2f0] p-2 bg-white">
-                        <span className="font-bold text-[#146b5f]">{String.fromCharCode(65 + oIdx)}.</span>
+                      <div key={opt.id} className="flex items-center gap-2 text-xs text-[#64748B] rounded border border-[#E2E8F0] p-2 bg-white">
+                        <span className="font-bold text-[#4F46E5]">{String.fromCharCode(65 + oIdx)}.</span>
                         <MathText text={opt.optionText} />
                       </div>
                     ))}
@@ -529,11 +529,11 @@ export function ActiveTestShell({
                 </div>
               ))}
             </div>
-            <div className="border-t border-[#e2e8f0] px-6 py-3 text-right">
+            <div className="border-t border-[#E2E8F0] px-6 py-3 text-right">
               <button
                 type="button"
                 onClick={() => setShowQuestionPaperModal(false)}
-                className="rounded-lg bg-[#146b5f] px-5 py-2 text-sm font-semibold text-white hover:bg-[#0f544a]"
+                className="rounded-lg bg-[#4F46E5] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4338CA]"
               >
                 Return to Test
               </button>
@@ -544,23 +544,23 @@ export function ActiveTestShell({
 
       <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Top CBT Examination Control Header */}
-        <header className="rounded-xl border border-[#ccd8d4] bg-white p-5 shadow-xs lg:col-span-2">
+        <header className="rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs lg:col-span-2">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-[#146b5f] animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[#146b5f]">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-[#4F46E5] animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
                   CBT Proctored Session
                 </span>
               </div>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#15171a]">{testName}</h1>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0F172A]">{testName}</h1>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => setShowQuestionPaperModal(true)}
-                className="rounded-lg border border-[#ccd8d4] bg-white px-3 py-2 text-xs font-semibold text-[#34403c] transition hover:bg-[#f4f6f5] inline-flex items-center gap-1.5"
+                className="rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-xs font-semibold text-[#0F172A] transition hover:bg-[#F8FAFC] inline-flex items-center gap-1.5"
                 title="View complete question paper"
               >
                 <span>📄 Question Paper</span>
@@ -569,7 +569,7 @@ export function ActiveTestShell({
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="hidden rounded-lg border border-[#ccd8d4] bg-white px-3 py-2 text-xs font-semibold text-[#34403c] transition hover:bg-[#f4f6f5] sm:inline-flex items-center gap-1.5"
+                className="hidden rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-xs font-semibold text-[#0F172A] transition hover:bg-[#F8FAFC] sm:inline-flex items-center gap-1.5"
                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen Mode"}
               >
                 <span>{isFullscreen ? "🗗 Exit Fullscreen" : "⛶ Fullscreen"}</span>
@@ -579,8 +579,8 @@ export function ActiveTestShell({
               <div
                 className={`flex items-center gap-2 rounded-xl px-4 py-2 border font-mono font-bold text-sm shadow-xs transition ${
                   remainingSeconds <= 300
-                    ? "border-[#fecdca] bg-[#fef3f2] text-[#b42318] animate-urgent-pulse"
-                    : "border-[#d9dee7] bg-[#fbfcfb] text-[#15171a]"
+                    ? "border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] animate-urgent-pulse"
+                    : "border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A]"
                 }`}
               >
                 <span>{remainingSeconds <= 300 ? "⚠️" : "⏰"}</span>
@@ -598,31 +598,31 @@ export function ActiveTestShell({
         </header>
 
         {/* Main Question & Options Workspace */}
-        <section className="flex flex-col justify-between rounded-xl border border-[#ccd8d4] bg-white p-6 shadow-xs">
+        <section className="flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white p-6 shadow-xs">
           <div>
             {/* Section & Marks Header Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-base font-bold text-[#15171a]">
+                <span className="text-base font-bold text-[#0F172A]">
                   Question {currentIndex + 1} of {questions.length}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-[#eef5f3] px-2.5 py-1 text-xs font-semibold text-[#146b5f]">
+                <span className="inline-flex items-center gap-1 rounded-md bg-[#EEF2FF] px-2.5 py-1 text-xs font-semibold text-[#4F46E5]">
                   ⏱️ {formatTime(currentQuestionTime)}
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
-                <span className="rounded-full bg-[#ecfdf3] px-3 py-1 font-semibold text-[#027a48] border border-[#a6f4c5]">
+                <span className="rounded-full bg-[#DCFCE7] px-3 py-1 font-semibold text-[#16A34A] border border-[#BBF7D0]">
                   +{currentQuestion.marks} Marks
                 </span>
-                <span className="rounded-full bg-[#fef3f2] px-3 py-1 font-semibold text-[#b42318] border border-[#fecdca]">
+                <span className="rounded-full bg-[#FEF2F2] px-3 py-1 font-semibold text-[#DC2626] border border-[#FECACA]">
                   -0.50 Negative
                 </span>
               </div>
             </div>
 
             {/* Question Text with KaTeX */}
-            <div className="mt-6 text-base font-medium leading-relaxed text-[#15171a] sm:text-lg">
+            <div className="mt-6 text-base font-medium leading-relaxed text-[#0F172A] sm:text-lg">
               <h2 className="font-medium">
                 <MathText text={currentQuestion.questionText} />
               </h2>
@@ -641,15 +641,15 @@ export function ActiveTestShell({
                     onClick={() => selectAnswer(currentQuestion.id, option.id)}
                     className={`group flex items-start gap-3.5 rounded-xl border p-4 text-left text-sm font-medium transition duration-150 ${
                       selected
-                        ? "border-[#146b5f] bg-[#eef5f3] text-[#0f544a] shadow-xs ring-1 ring-[#146b5f]"
-                        : "border-[#d9dee7] bg-white text-[#15171a] hover:border-[#146b5f]/60 hover:bg-[#fbfcfb]"
+                        ? "border-[#4F46E5] bg-[#EEF2FF] text-[#4338CA] shadow-xs ring-1 ring-[#4F46E5]"
+                        : "border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#4F46E5]/60 hover:bg-[#F8FAFC]"
                     }`}
                   >
                     <span
                       className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition ${
                         selected
-                          ? "bg-[#146b5f] text-white shadow-xs"
-                          : "border border-[#ccd8d4] bg-[#f4f6f5] text-[#475467] group-hover:border-[#146b5f] group-hover:text-[#146b5f]"
+                          ? "bg-[#4F46E5] text-white shadow-xs"
+                          : "border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] group-hover:border-[#4F46E5] group-hover:text-[#4F46E5]"
                       }`}
                     >
                       {letter}
@@ -664,7 +664,7 @@ export function ActiveTestShell({
           </div>
 
           {/* Bottom Action Toolbar */}
-          <div className="mt-8 border-t border-[#e2e8f0] pt-6 space-y-4">
+          <div className="mt-8 border-t border-[#E2E8F0] pt-6 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
@@ -672,8 +672,8 @@ export function ActiveTestShell({
                   onClick={() => toggleMarkedForReview(currentQuestion.id)}
                   className={`rounded-lg border px-4 py-2 text-xs font-bold transition ${
                     markedForReview[currentQuestion.id]
-                      ? "border-[#7c3aed] bg-[#f5f3ff] text-[#7c3aed]"
-                      : "border-[#ccd8d4] bg-white text-[#475467] hover:bg-[#f4f6f5] hover:text-[#15171a]"
+                      ? "border-[#F59E0B] bg-[#FFFBEB] text-[#D97706]"
+                      : "border-[#E2E8F0] bg-white text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]"
                   }`}
                 >
                   {markedForReview[currentQuestion.id]
@@ -684,7 +684,7 @@ export function ActiveTestShell({
                   type="button"
                   onClick={() => clearResponse(currentQuestion.id)}
                   disabled={!answers[currentQuestion.id]}
-                  className="rounded-lg border border-[#ccd8d4] bg-white px-4 py-2 text-xs font-bold text-[#475467] transition hover:bg-[#f4f6f5] hover:text-[#15171a] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-[#E2E8F0] bg-white px-4 py-2 text-xs font-bold text-[#64748B] transition hover:bg-[#F8FAFC] hover:text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Clear response
                 </button>
@@ -695,14 +695,14 @@ export function ActiveTestShell({
                   type="button"
                   disabled={currentIndex === 0}
                   onClick={() => goToQuestion(currentIndex - 1)}
-                  className="rounded-lg border border-[#ccd8d4] bg-white px-4 py-2 text-xs font-bold text-[#34403c] transition hover:bg-[#f4f6f5] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-[#E2E8F0] bg-white px-4 py-2 text-xs font-bold text-[#0F172A] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Previous
                 </button>
                 <button
                   type="button"
                   onClick={() => goToQuestion(currentIndex + 1)}
-                  className="rounded-lg bg-[#146b5f] px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#0f544a]"
+                  className="rounded-lg bg-[#4F46E5] px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#4338CA]"
                 >
                   Save & Next
                 </button>
@@ -710,7 +710,7 @@ export function ActiveTestShell({
                   type="button"
                   onClick={() => setShowSubmitConfirmation(true)}
                   disabled={submitState === "submitting" || submitState === "submitted"}
-                  className="rounded-lg bg-[#15171a] px-4 py-2 text-xs font-bold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg bg-[#0F172A] px-4 py-2 text-xs font-bold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Submit test
                 </button>
@@ -719,9 +719,9 @@ export function ActiveTestShell({
 
             {/* Submission Confirmation Modal */}
             {showSubmitConfirmation ? (
-              <section className="rounded-xl border-2 border-[#146b5f] bg-[#fbfcfb] p-5 shadow-md">
-                <h3 className="text-base font-bold text-[#15171a]">Submit this test?</h3>
-                <p className="mt-1 text-xs text-[#667085]">
+              <section className="rounded-xl border-2 border-[#4F46E5] bg-[#F8FAFC] p-5 shadow-md">
+                <h3 className="text-base font-bold text-[#0F172A]">Submit this test?</h3>
+                <p className="mt-1 text-xs text-[#64748B]">
                   Please review your attempt summary below before final submission. Once submitted, you cannot alter your responses.
                 </p>
                 <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
@@ -734,7 +734,7 @@ export function ActiveTestShell({
                     type="button"
                     onClick={submitAttempt}
                     disabled={submitState === "submitting" || submitState === "submitted"}
-                    className="rounded-lg bg-[#146b5f] px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-[#0f544a] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-[#4F46E5] px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {submitState === "submitting" ? "Submitting..." : "Confirm submit"}
                   </button>
@@ -742,7 +742,7 @@ export function ActiveTestShell({
                     type="button"
                     onClick={() => setShowSubmitConfirmation(false)}
                     disabled={submitState === "submitting"}
-                    className="rounded-lg border border-[#ccd8d4] bg-white px-4 py-2.5 text-sm font-semibold text-[#475467] hover:bg-[#f4f6f5] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-semibold text-[#64748B] hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Continue test
                   </button>
@@ -751,7 +751,7 @@ export function ActiveTestShell({
             ) : null}
 
             {submitState === "failed" ? (
-              <p className="mt-2 text-xs font-semibold text-[#a3412f]">
+              <p className="mt-2 text-xs font-semibold text-[#DC2626]">
                 ⚠️ Submit failed. Please check your connection and try again.
               </p>
             ) : null}
@@ -759,23 +759,23 @@ export function ActiveTestShell({
         </section>
 
         {/* Right-Hand Question Palette Sidebar */}
-        <aside className="flex flex-col justify-between rounded-xl border border-[#ccd8d4] bg-white p-5 shadow-xs">
+        <aside className="flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
           <div>
             {/* Candidate Header */}
-            <div className="flex items-center gap-3 border-b border-[#e2e8f0] pb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#146b5f] text-sm font-bold text-white shadow-xs">
+            <div className="flex items-center gap-3 border-b border-[#E2E8F0] pb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5] text-sm font-bold text-white shadow-xs">
                 👤
               </div>
               <div>
-                <p className="text-xs font-bold text-[#15171a]">Student Candidate</p>
-                <p className="text-[11px] text-[#667085]">Roll ID: {attemptId.slice(0, 8).toUpperCase()}</p>
+                <p className="text-xs font-bold text-[#0F172A]">Candidate Profile</p>
+                <p className="text-[11px] text-[#64748B]">Roll ID: {attemptId.slice(0, 8).toUpperCase()}</p>
               </div>
             </div>
 
             {/* Question Palette Title & Counter */}
             <div className="mt-4 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-[#15171a]">Question palette</h2>
-              <span className="rounded bg-[#f4f6f5] px-2 py-0.5 text-xs font-bold text-[#146b5f]">
+              <h2 className="text-sm font-bold text-[#0F172A]">Question palette</h2>
+              <span className="rounded bg-[#EEF2FF] px-2 py-0.5 text-xs font-bold text-[#4F46E5]">
                 {currentIndex + 1} / {questions.length}
               </span>
             </div>
@@ -792,20 +792,20 @@ export function ActiveTestShell({
                 let isAnsweredAndMarked = false;
 
                 if (isAns && isMrk) {
-                  style = "bg-[#7c3aed] border-[#6d28d9] text-white";
+                  style = "bg-[#4F46E5] border-[#4338CA] text-white";
                   isAnsweredAndMarked = true;
                 } else if (!isAns && isMrk) {
-                  style = "bg-[#ea580c] border-[#c2410c] text-white";
+                  style = "bg-[#F59E0B] border-[#D97706] text-white";
                 } else if (isAns) {
-                  style = "bg-[#16a34a] border-[#15803d] text-white";
+                  style = "bg-[#16A34A] border-[#15803D] text-white";
                 } else if (isVis) {
-                  style = "bg-[#fee4e2] border-[#fecdca] text-[#b42318]";
+                  style = "bg-[#FEF2F2] border-[#FECACA] text-[#DC2626]";
                 } else {
-                  style = "bg-[#f1f5f9] border-[#cbd5e1] text-[#475467]";
+                  style = "bg-[#F1F5F9] border-[#CBD5E1] text-[#64748B]";
                 }
 
                 const currentRing = isCurrent
-                  ? "ring-2 ring-[#15171a] ring-offset-2 scale-105 font-bold z-10 shadow-xs"
+                  ? "ring-2 ring-[#0F172A] ring-offset-2 scale-105 font-bold z-10 shadow-xs"
                   : "";
 
                 return (
@@ -818,7 +818,7 @@ export function ActiveTestShell({
                   >
                     {index + 1}
                     {isAnsweredAndMarked ? (
-                      <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full border border-white bg-[#10b981]" />
+                      <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full border border-white bg-[#10B981]" />
                     ) : null}
                   </button>
                 );
@@ -826,72 +826,72 @@ export function ActiveTestShell({
             </div>
 
             {/* Authentic 5-State Legend */}
-            <div className="mt-6 border-t border-[#e2e8f0] pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#667085]">
+            <div className="mt-6 border-t border-[#E2E8F0] pt-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
                 Question Legend
               </h3>
               <div className="mt-3 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded bg-[#16a34a] font-bold text-white text-[10px]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-[#16A34A] font-bold text-white text-[10px]">
                       ✓
                     </span>
-                    <span className="text-[#34403c] font-medium">Answered</span>
+                    <span className="text-[#0F172A] font-medium">Answered</span>
                   </div>
-                  <span className="font-bold text-[#16a34a]">{paletteStats.answered}</span>
+                  <span className="font-bold text-[#16A34A]">{paletteStats.answered}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded border border-[#fecdca] bg-[#fee4e2] font-bold text-[#b42318] text-[10px]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded border border-[#FECACA] bg-[#FEF2F2] font-bold text-[#DC2626] text-[10px]">
                       ●
                     </span>
-                    <span className="text-[#34403c] font-medium">Not Answered</span>
+                    <span className="text-[#0F172A] font-medium">Not Answered</span>
                   </div>
-                  <span className="font-bold text-[#b42318]">{paletteStats.notAnswered}</span>
+                  <span className="font-bold text-[#DC2626]">{paletteStats.notAnswered}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded border border-[#cbd5e1] bg-[#f1f5f9] font-bold text-[#475467] text-[10px]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded border border-[#CBD5E1] bg-[#F1F5F9] font-bold text-[#64748B] text-[10px]">
                       ○
                     </span>
-                    <span className="text-[#34403c] font-medium">Not Visited</span>
+                    <span className="text-[#0F172A] font-medium">Not Visited</span>
                   </div>
-                  <span className="font-bold text-[#667085]">{paletteStats.notVisited}</span>
+                  <span className="font-bold text-[#64748B]">{paletteStats.notVisited}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded bg-[#ea580c] font-bold text-white text-[10px]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-[#F59E0B] font-bold text-white text-[10px]">
                       ★
                     </span>
-                    <span className="text-[#34403c] font-medium">Marked for Review</span>
+                    <span className="text-[#0F172A] font-medium">Marked for Review</span>
                   </div>
-                  <span className="font-bold text-[#ea580c]">{paletteStats.markedOnly}</span>
+                  <span className="font-bold text-[#F59E0B]">{paletteStats.markedOnly}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="relative flex h-5 w-5 items-center justify-center rounded bg-[#7c3aed] font-bold text-white text-[10px]">
+                    <span className="relative flex h-5 w-5 items-center justify-center rounded bg-[#4F46E5] font-bold text-white text-[10px]">
                       ★
-                      <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                      <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[#10B981]" />
                     </span>
-                    <span className="text-[#34403c] font-medium">Answered & Marked</span>
+                    <span className="text-[#0F172A] font-medium">Answered & Marked</span>
                   </div>
-                  <span className="font-bold text-[#7c3aed]">{paletteStats.answeredAndMarked}</span>
+                  <span className="font-bold text-[#4F46E5]">{paletteStats.answeredAndMarked}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Palette Footer Submit Button */}
-          <div className="mt-6 border-t border-[#e2e8f0] pt-4">
+          <div className="mt-6 border-t border-[#E2E8F0] pt-4">
             <button
               type="button"
               onClick={() => setShowSubmitConfirmation(true)}
               disabled={submitState === "submitting" || submitState === "submitted"}
-              className="w-full rounded-xl bg-[#146b5f] py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#0f544a] disabled:opacity-50"
+              className="w-full rounded-xl bg-[#4F46E5] py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#4338CA] disabled:opacity-50"
             >
               Submit Entire Test
             </button>
@@ -904,9 +904,9 @@ export function ActiveTestShell({
 
 function SubmitStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-[#dbe3e0] bg-white px-3 py-2">
-      <p className="text-xs text-[#667085]">{label}</p>
-      <p className="mt-1 font-semibold">{value}</p>
+    <div className="rounded-lg border border-[#E2E8F0] bg-white px-3 py-2">
+      <p className="text-xs text-[#64748B]">{label}</p>
+      <p className="mt-1 font-semibold text-[#0F172A]">{value}</p>
     </div>
   );
 }
@@ -936,9 +936,9 @@ function formatSaveState(saveState: "idle" | "saving" | "saved" | "failed") {
 
 function StatusPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-[#ccd8d4] bg-white px-3 py-2">
-      <p className="text-xs text-[#667085]">{label}</p>
-      <p className="mt-1 font-semibold">{value}</p>
+    <div className="rounded-lg border border-[#E2E8F0] bg-white px-3 py-2">
+      <p className="text-xs text-[#64748B]">{label}</p>
+      <p className="mt-1 font-semibold text-[#0F172A]">{value}</p>
     </div>
   );
 }

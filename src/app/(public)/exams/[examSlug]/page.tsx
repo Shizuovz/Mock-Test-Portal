@@ -64,7 +64,7 @@ export default async function ExamDetailPage({ params }: ExamDetailPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[#f4f6f5] px-6 py-8 text-[#15171a]">
+    <main className="min-h-screen bg-[#F8FAFC] px-6 py-8 text-[#0F172A]">
       {/* Google Search Structured Data */}
       <script
         type="application/ld+json"
@@ -72,46 +72,49 @@ export default async function ExamDetailPage({ params }: ExamDetailPageProps) {
       />
 
       <section className="mx-auto max-w-6xl">
-        <div className="border-b border-[#ccd8d4] pb-6">
-          <Link href="/exams" className="text-sm font-semibold text-[#146b5f]">
-            Back to exams
+        <div className="border-b border-[#E2E8F0] pb-6">
+          <Link
+            href="/exams"
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#4F46E5] hover:underline"
+          >
+            ← Back to Exam Directory
           </Link>
-          <h1 className="mt-4 text-3xl font-semibold">{exam.name}</h1>
-          <p className="mt-4 max-w-2xl text-[#475467]">{exam.description}</p>
+          <h1 className="mt-3 text-3xl font-extrabold text-[#0F172A]">{exam.name}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#64748B]">{exam.description}</p>
         </div>
 
         <div className="mt-8 grid gap-4">
           {exam.tests.map((test) => (
             <article
               key={test.id}
-              className="grid gap-5 border border-[#ccd8d4] bg-[#fbfcfb] p-5 md:grid-cols-[1fr_auto]"
+              className="grid gap-5 rounded-xl border border-[#E2E8F0] bg-white p-6 shadow-xs transition hover:border-[#4F46E5] md:grid-cols-[1fr_auto]"
             >
               <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-[#146b5f]">
-                  Published mock test
+                <p className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
+                  Published CBT Mock Test
                 </p>
-                <h2 className="mt-3 text-2xl font-semibold">{test.name}</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#475467]">
+                <h2 className="mt-2 text-xl font-bold text-[#0F172A]">{test.name}</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#64748B]">
                   {test.description}
                 </p>
-                <div className="mt-5 flex flex-wrap gap-2 text-sm">
-                  <span className="border border-[#ccd8d4] bg-white px-3 py-2">
-                    {test.questionCount} questions
+                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-md border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 font-semibold text-[#0F172A]">
+                    📚 {test.questionCount} Questions
                   </span>
-                  <span className="border border-[#ccd8d4] bg-white px-3 py-2">
-                    {test.durationMinutes} minutes
+                  <span className="rounded-md border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 font-semibold text-[#0F172A]">
+                    ⏱️ {test.durationMinutes} Minutes
                   </span>
-                  <span className="border border-[#ccd8d4] bg-white px-3 py-2">
-                    {test.totalMarks} marks
+                  <span className="rounded-md border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 font-semibold text-[#0F172A]">
+                    🎯 {test.totalMarks} Total Marks
                   </span>
                 </div>
               </div>
               <div className="flex items-center">
                 <Link
                   href={`/test/${test.id}/instructions`}
-                  className="inline-flex rounded-md bg-[#146b5f] px-5 py-3 text-sm font-semibold text-white"
+                  className="inline-flex items-center justify-center rounded-xl bg-[#4F46E5] px-6 py-3 text-sm font-bold text-white shadow-xs transition hover:bg-[#4338CA]"
                 >
-                  Start test
+                  Start Test ➔
                 </Link>
               </div>
             </article>
