@@ -41,8 +41,11 @@ The application requires specific environment variables configured in your deplo
 
 ### Step 3.2: Apply Schema Migrations
 In the Supabase SQL Editor (or via Supabase CLI `supabase db push`):
-1. Run the base schema migration file:
-   - File: [`supabase/migrations/0001_initial_schema.sql`](file:///d:/PP/Mock_Test_Portal/supabase/migrations/0001_initial_schema.sql)
+1. Run the base schema migration and subsequent feature migrations:
+   - Base Schema: [`supabase/migrations/0001_initial_schema.sql`](file:///d:/PP/Mock_Test_Portal/supabase/migrations/0001_initial_schema.sql)
+   - Retake Policies: [`supabase/migrations/0002_retake_policies.sql`](file:///d:/PP/Mock_Test_Portal/supabase/migrations/0002_retake_policies.sql)
+   - Pacing Analytics: [`supabase/migrations/0003_pacing_analytics.sql`](file:///d:/PP/Mock_Test_Portal/supabase/migrations/0003_pacing_analytics.sql)
+   - *Alternative (Single Run)*: Run the combined incremental script [`supabase/apply_production_migrations.sql`](file:///d:/PP/Mock_Test_Portal/supabase/apply_production_migrations.sql).
 2. Run the Row Level Security (RLS) policies:
    - File: [`supabase/policies/profiles.sql`](file:///d:/PP/Mock_Test_Portal/supabase/policies/profiles.sql)
    - File: [`supabase/policies/content.sql`](file:///d:/PP/Mock_Test_Portal/supabase/policies/content.sql)
