@@ -133,12 +133,12 @@ export default async function Home() {
             >
               Sign In
             </Link>
-            <Link
+            {/* <Link
               href="/dashboard"
               className="rounded-lg bg-[#16A34A] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#15803D]"
             >
               Get Started
-            </Link>
+            </Link> */}
           </div>
         </div>
       </header>
