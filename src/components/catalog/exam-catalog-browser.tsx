@@ -8,35 +8,30 @@ type ExamCatalogBrowserProps = {
   initialExams: CatalogExam[];
 };
 
-// Categorization helper tailored for NSSB, SSC, NPSC and State exams
+// Categorization helper tailored exclusively for NSSB exams
 function getExamCategory(exam: CatalogExam): string {
   const text = `${exam.name} ${exam.description ?? ""} ${exam.slug}`.toLowerCase();
-  if (text.includes("nssb") || text.includes("nagaland staff")) {
-    return "NSSB (Nagaland Staff Selection)";
+  if (text.includes("cgl") || text.includes("graduate")) {
+    return "NSSB CGL (Graduate Level)";
   }
-  if (text.includes("npsc") || text.includes("nagaland public") || text.includes("ncs") || text.includes("nps")) {
-    return "NPSC (Nagaland PSC)";
+  if (text.includes("chsl") || text.includes("higher secondary") || text.includes("10+2")) {
+    return "NSSB CHSL (10+2 Level)";
+  }
+  if (text.includes("mts") || text.includes("junior") || text.includes("clerk") || text.includes("division")) {
+    return "NSSB Junior Division & MTS";
   }
   if (
-    text.includes("ssc") ||
-    text.includes("staff selection") ||
-    text.includes("cgl") ||
-    text.includes("chsl") ||
-    text.includes("mts") ||
-    text.includes("gd constable")
+    text.includes("geography") ||
+    text.includes("gk") ||
+    text.includes("general") ||
+    text.includes("english") ||
+    text.includes("computer") ||
+    text.includes("math") ||
+    text.includes("reasoning")
   ) {
-    return "Staff Selection (SSC)";
+    return "Subject & Sectional Mocks";
   }
-  if (text.includes("civil") || text.includes("upsc") || text.includes("psc") || text.includes("state")) {
-    return "Civil Services & State PSC";
-  }
-  if (text.includes("bank") || text.includes("ibps") || text.includes("sbi") || text.includes("rbi")) {
-    return "Banking & Finance";
-  }
-  if (text.includes("railway") || text.includes("rrb") || text.includes("ntpc")) {
-    return "Railways (RRB)";
-  }
-  return "General & Departmental";
+  return "NSSB Mock Series";
 }
 
 export function ExamCatalogBrowser({ initialExams }: ExamCatalogBrowserProps) {
@@ -87,115 +82,62 @@ export function ExamCatalogBrowser({ initialExams }: ExamCatalogBrowserProps) {
   }
 
   return (
-    <div className="mt-8 space-y-6">
-      {/* 1. Search Bar & Controls Frame */}
-      <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Instant Search Input */}
-          <div className="relative flex-1">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#64748B]">
-              🔍
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search NSSB, SSC, NPSC exams (e.g. NSSB CGL, SSC Tier-I, NPSC Prelims)..."
-              className="w-full rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] py-2.5 pl-10 pr-10 text-sm text-[#0F172A] placeholder-[#64748B] transition focus:border-[#4F46E5] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-semibold text-[#64748B] hover:text-[#0F172A]"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 text-sm text-[#0F172A]">
-            <span className="whitespace-nowrap font-medium text-xs uppercase tracking-wider text-[#64748B]">
-              Sort by:
-            </span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "name" | "tests" | "questions")}
-              className="rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-xs font-semibold text-[#0F172A] transition focus:border-[#4F46E5] focus:outline-none"
-            >
-              <option value="name">Alphabetical (A-Z)</option>
-              <option value="tests">Most Tests</option>
-              <option value="questions">Most Questions</option>
-            </select>
-          </div>
-        </div>
-
-        {/* 2. Category / Track Filter Pills */}
-        <div className="mt-4 border-t border-[#F1F5F9] pt-4">
-          <div className="flex items-center justify-between pb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
-              Filter by Category:
-            </span>
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={handleReset}
-                className="text-xs font-semibold text-[#4F46E5] hover:underline"
-              >
-                Reset filters
-              </button>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+    <div className="mt-3 space-y-4">
+      {/* 1. Streamlined Single-Line Search & Controls Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Instant Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#94A3B8] text-xs">
+            🔍
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search NSSB mocks, subjects, or topics..."
+            className="w-full rounded-xl border border-[#CBD5E1] bg-white py-2 pl-9 pr-8 text-xs sm:text-sm text-[#0F172A] placeholder-[#94A3B8] shadow-2xs transition focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+          />
+          {searchQuery && (
             <button
               type="button"
-              onClick={() => setSelectedCategory("all")}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
-                selectedCategory === "all"
-                  ? "bg-[#4F46E5] text-white shadow-xs"
-                  : "border border-[#E2E8F0] bg-white text-[#64748B] hover:bg-[#EEF2FF]/40 hover:text-[#0F172A]"
-              }`}
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-xs text-[#94A3B8] hover:text-[#0F172A]"
             >
-              All Examinations ({initialExams.length})
+              ✕
             </button>
+          )}
+        </div>
 
-            {availableCategories.map((cat) => {
-              const count = initialExams.filter((e) => getExamCategory(e) === cat).length;
-              const isSelected = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(isSelected ? "all" : cat)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
-                    isSelected
-                      ? "bg-[#4F46E5] text-white shadow-xs"
-                      : "border border-[#E2E8F0] bg-white text-[#64748B] hover:bg-[#EEF2FF]/40 hover:text-[#0F172A]"
-                  }`}
-                >
-                  {cat} ({count})
-                </button>
-              );
-            })}
-          </div>
+        {/* Category & Sort Controls */}
+        <div className="flex items-center gap-2">
+          {availableCategories.length > 1 && (
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="rounded-xl border border-[#CBD5E1] bg-white px-3 py-2 text-xs font-semibold text-[#334155] shadow-2xs transition focus:border-[#2563EB] focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Categories ({initialExams.length})</option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat} ({initialExams.filter((e) => getExamCategory(e) === cat).length})
+                </option>
+              ))}
+            </select>
+          )}
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as "name" | "tests" | "questions")}
+            className="rounded-xl border border-[#CBD5E1] bg-white px-3 py-2 text-xs font-semibold text-[#334155] shadow-2xs transition focus:border-[#2563EB] focus:outline-none cursor-pointer"
+          >
+            <option value="name">Sort: A to Z</option>
+            <option value="tests">Sort: Most Tests</option>
+            <option value="questions">Sort: Most Questions</option>
+          </select>
         </div>
       </div>
 
-      {/* Results Header Counter */}
-      <div className="flex items-center justify-between text-xs font-medium text-[#64748B]">
-        <span>
-          Showing <strong className="text-[#0F172A]">{filteredExams.length}</strong> of{" "}
-          {initialExams.length} examination tracks
-        </span>
-        {searchQuery && (
-          <span>
-            Search results for &ldquo;<strong className="text-[#0F172A]">{searchQuery}</strong>&rdquo;
-          </span>
-        )}
-      </div>
-
-      {/* 3. Filtered Exam Cards Grid */}
+      {/* 2. Filtered Exam Cards Grid (Immediate Above-the-Fold Visibility) */}
       {filteredExams.length > 0 ? (
         <div className="grid gap-5 md:grid-cols-2">
           {filteredExams.map((exam) => {
@@ -220,7 +162,7 @@ export function ExamCatalogBrowser({ initialExams }: ExamCatalogBrowserProps) {
                     {exam.name}
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-[#64748B] line-clamp-3">
-                    {exam.description ?? "Full-length mock tests, negative marking, and topic-wise practice sets."}
+                    {exam.description ?? "Full-length NSSB mock tests, negative marking, and topic-wise practice sets."}
                   </p>
                 </div>
 
@@ -241,9 +183,9 @@ export function ExamCatalogBrowser({ initialExams }: ExamCatalogBrowserProps) {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#F8FAFC] text-xl text-[#64748B]">
             🔍
           </div>
-          <h3 className="mt-4 text-base font-semibold text-[#0F172A]">No examinations found</h3>
+          <h3 className="mt-4 text-base font-semibold text-[#0F172A]">No NSSB examinations found</h3>
           <p className="mt-1 text-sm text-[#64748B]">
-            No exam matches your current search criteria. Try searching for &ldquo;NSSB&rdquo;, &ldquo;SSC&rdquo;, or &ldquo;NPSC&rdquo;.
+            No exam matches your current search criteria. Try searching for &ldquo;NSSB&rdquo;, &ldquo;General Knowledge&rdquo;, or &ldquo;Geography&rdquo;.
           </p>
           <button
             type="button"

@@ -16,23 +16,33 @@ export async function submitAttempt(input: unknown) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
-    error: userError,
   } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    throw new AttemptAuthError("You must be signed in to submit a test.");
-  }
+  const { getGuestSessionId } = await import("@/lib/auth/guest-session");
+  const inputGuestId = (input as Record<string, unknown>)?.guestSessionId as string | undefined;
+  const guestSessionId = inputGuestId || (await getGuestSessionId());
 
   const db = createSupabaseAdminClient();
   const { data: attempt, error: attemptError } = await db
     .from("test_attempts")
     .select(
-      "id, user_id, test_id, status, started_at, expires_at, submitted_at, score, max_score, correct_count, wrong_count, unanswered_count, time_taken_seconds, tests(name)",
+      "id, user_id, guest_session_id, test_id, status, started_at, expires_at, submitted_at, score, max_score, correct_count, wrong_count, unanswered_count, time_taken_seconds, tests(name)",
     )
     .eq("id", parsed.attemptId)
     .single();
 
-  if (attemptError || !attempt || attempt.user_id !== user.id) {
+  if (attemptError || !attempt) {
+    throw new AttemptNotFoundError("Attempt not found.");
+  }
+
+  const isOwner = user
+    ? attempt.user_id === user.id
+    : attempt.user_id === null &&
+      (!attempt.guest_session_id ||
+        !guestSessionId ||
+        attempt.guest_session_id === guestSessionId);
+
+  if (!isOwner) {
     throw new AttemptNotFoundError("Attempt not found.");
   }
 

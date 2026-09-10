@@ -42,6 +42,10 @@ describe("Architecture & Database Compliance", () => {
       "user_answers",
       "bookmarks",
       "audit_logs",
+      "guest_sessions",
+      "user_entitlements",
+      "subscriptions",
+      "payments",
     ];
 
     await Promise.all(

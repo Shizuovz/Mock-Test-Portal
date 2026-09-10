@@ -9,6 +9,7 @@ import { MathText } from "@/components/ui/math-text";
 
 type ActiveTestShellProps = {
   attemptId: string;
+  guestSessionId?: string | null;
   testId: string;
   testName: string;
   startedAt: string;
@@ -21,6 +22,7 @@ type ActiveTestShellProps = {
 
 export function ActiveTestShell({
   attemptId,
+  guestSessionId,
   testId,
   testName,
   startedAt,
@@ -60,7 +62,7 @@ export function ActiveTestShell({
   const [showSubmitConfirmation, setShowSubmitConfirmation] = useState(false);
   const [showQuestionPaperModal, setShowQuestionPaperModal] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(initialRemainingSeconds);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "failed">(
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "offline">(
     "idle",
   );
   const MAX_ALLOWED_VIOLATIONS = 3;
@@ -228,6 +230,7 @@ export function ActiveTestShell({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(guestSessionId ? { "x-guest-session-id": guestSessionId } : {}),
         },
         body: JSON.stringify({
           testId,
@@ -252,20 +255,32 @@ export function ActiveTestShell({
     } catch {
       setSubmitState("failed");
     }
-  }, [answers, attemptId, getAllTimeSpent, router, startedAtDate, submitState, testId]);
+  }, [answers, attemptId, getAllTimeSpent, guestSessionId, router, startedAtDate, submitState, testId]);
 
   async function saveAnswer(
     questionId: string,
     selectedOptionId: string | null,
     isMarkedForReview: boolean,
+    retryCount = 0
   ) {
     setSaveState("saving");
+
+    // Local Storage Buffer Mirror for Crash Recovery
+    try {
+      const bufferKey = `mock_attempt_buffer_${attemptId}`;
+      const existingBuffer = JSON.parse(window.localStorage.getItem(bufferKey) || "{}");
+      existingBuffer[questionId] = selectedOptionId;
+      window.localStorage.setItem(bufferKey, JSON.stringify(existingBuffer));
+    } catch {
+      // Local storage write optional/fail-open
+    }
 
     try {
       const response = await fetch(`/api/attempts/${attemptId}/answers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(guestSessionId ? { "x-guest-session-id": guestSessionId } : {}),
         },
         body: JSON.stringify({
           questionId,
@@ -281,7 +296,14 @@ export function ActiveTestShell({
 
       setSaveState("saved");
     } catch {
-      setSaveState("failed");
+      if (retryCount < 2) {
+        // Exponential backoff retry for transient network hiccups
+        setTimeout(() => {
+          void saveAnswer(questionId, selectedOptionId, isMarkedForReview, retryCount + 1);
+        }, (retryCount + 1) * 1500);
+      } else {
+        setSaveState("offline");
+      }
     }
   }
 
@@ -456,7 +478,7 @@ export function ActiveTestShell({
                     document.documentElement.requestFullscreen().catch(() => {});
                   }
                 }}
-                className="w-full rounded-lg bg-[#4F46E5] py-3 text-center text-sm font-bold text-white shadow transition hover:bg-[#4338CA]"
+                className="w-full rounded-lg bg-[#2563EB] py-3 text-center text-sm font-bold text-white shadow transition hover:bg-[#1D4ED8]"
               >
                 I Understand — Resume Examination
               </button>
@@ -512,7 +534,7 @@ export function ActiveTestShell({
               {questions.map((q, qIdx) => (
                 <div key={q.id} className="rounded-lg border border-[#E2E8F0] p-4 bg-[#F8FAFC]">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-xs text-[#4F46E5]">Q{qIdx + 1}.</span>
+                    <span className="font-bold text-xs text-[#2563EB]">Q{qIdx + 1}.</span>
                     <span className="text-[11px] font-medium text-[#64748B]">+{q.marks} Marks</span>
                   </div>
                   <div className="mt-2 text-sm font-medium text-[#0F172A]">
@@ -521,7 +543,7 @@ export function ActiveTestShell({
                   <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
                     {q.options.map((opt, oIdx) => (
                       <div key={opt.id} className="flex items-center gap-2 text-xs text-[#64748B] rounded border border-[#E2E8F0] p-2 bg-white">
-                        <span className="font-bold text-[#4F46E5]">{String.fromCharCode(65 + oIdx)}.</span>
+                        <span className="font-bold text-[#2563EB]">{String.fromCharCode(65 + oIdx)}.</span>
                         <MathText text={opt.optionText} />
                       </div>
                     ))}
@@ -533,7 +555,7 @@ export function ActiveTestShell({
               <button
                 type="button"
                 onClick={() => setShowQuestionPaperModal(false)}
-                className="rounded-lg bg-[#4F46E5] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4338CA]"
+                className="rounded-lg bg-[#2563EB] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1D4ED8]"
               >
                 Return to Test
               </button>
@@ -548,8 +570,8 @@ export function ActiveTestShell({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-[#4F46E5] animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-[#2563EB] animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">
                   CBT Proctored Session
                 </span>
               </div>
@@ -606,7 +628,12 @@ export function ActiveTestShell({
                 <span className="text-base font-bold text-[#0F172A]">
                   Question {currentIndex + 1} of {questions.length}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-[#EEF2FF] px-2.5 py-1 text-xs font-semibold text-[#4F46E5]">
+                {currentIndex === questions.length - 1 && (
+                  <span className="rounded-md bg-[#EFF6FF] px-2.5 py-0.5 text-xs font-bold text-[#2563EB] border border-[#BFDBFE]">
+                    Final Question
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 rounded-md bg-[#EFF6FF] px-2.5 py-1 text-xs font-semibold text-[#2563EB]">
                   ⏱️ {formatTime(currentQuestionTime)}
                 </span>
               </div>
@@ -641,15 +668,15 @@ export function ActiveTestShell({
                     onClick={() => selectAnswer(currentQuestion.id, option.id)}
                     className={`group flex items-start gap-3.5 rounded-xl border p-4 text-left text-sm font-medium transition duration-150 ${
                       selected
-                        ? "border-[#4F46E5] bg-[#EEF2FF] text-[#4338CA] shadow-xs ring-1 ring-[#4F46E5]"
-                        : "border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#4F46E5]/60 hover:bg-[#F8FAFC]"
+                        ? "border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8] shadow-xs ring-1 ring-[#2563EB]"
+                        : "border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#2563EB]/60 hover:bg-[#F8FAFC]"
                     }`}
                   >
                     <span
                       className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition ${
                         selected
-                          ? "bg-[#4F46E5] text-white shadow-xs"
-                          : "border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] group-hover:border-[#4F46E5] group-hover:text-[#4F46E5]"
+                          ? "bg-[#2563EB] text-white shadow-xs"
+                          : "border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B] group-hover:border-[#2563EB] group-hover:text-[#2563EB]"
                       }`}
                     >
                       {letter}
@@ -697,29 +724,42 @@ export function ActiveTestShell({
                   onClick={() => goToQuestion(currentIndex - 1)}
                   className="rounded-lg border border-[#E2E8F0] bg-white px-4 py-2 text-xs font-bold text-[#0F172A] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Previous
+                  ← Previous
                 </button>
-                <button
-                  type="button"
-                  onClick={() => goToQuestion(currentIndex + 1)}
-                  className="rounded-lg bg-[#4F46E5] px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#4338CA]"
-                >
-                  Save & Next
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowSubmitConfirmation(true)}
-                  disabled={submitState === "submitting" || submitState === "submitted"}
-                  className="rounded-lg bg-[#0F172A] px-4 py-2 text-xs font-bold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  Submit test
-                </button>
+                {currentIndex < questions.length - 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => goToQuestion(currentIndex + 1)}
+                      className="rounded-lg bg-[#2563EB] px-5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+                    >
+                      Save &amp; Next →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSubmitConfirmation(true)}
+                      disabled={submitState === "submitting" || submitState === "submitted"}
+                      className="rounded-lg border border-[#CBD5E1] bg-white px-4 py-2 text-xs font-bold text-[#475569] transition hover:bg-[#F8FAFC] hover:text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Submit test
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowSubmitConfirmation(true)}
+                    disabled={submitState === "submitting" || submitState === "submitted"}
+                    className="rounded-lg bg-[#2563EB] px-6 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+                  >
+                    Submit Test ✓
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Submission Confirmation Modal */}
             {showSubmitConfirmation ? (
-              <section className="rounded-xl border-2 border-[#4F46E5] bg-[#F8FAFC] p-5 shadow-md">
+              <section className="rounded-xl border-2 border-[#2563EB] bg-[#F8FAFC] p-5 shadow-md">
                 <h3 className="text-base font-bold text-[#0F172A]">Submit this test?</h3>
                 <p className="mt-1 text-xs text-[#64748B]">
                   Please review your attempt summary below before final submission. Once submitted, you cannot alter your responses.
@@ -734,7 +774,7 @@ export function ActiveTestShell({
                     type="button"
                     onClick={submitAttempt}
                     disabled={submitState === "submitting" || submitState === "submitted"}
-                    className="rounded-lg bg-[#4F46E5] px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-lg bg-[#2563EB] px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {submitState === "submitting" ? "Submitting..." : "Confirm submit"}
                   </button>
@@ -763,7 +803,7 @@ export function ActiveTestShell({
           <div>
             {/* Candidate Header */}
             <div className="flex items-center gap-3 border-b border-[#E2E8F0] pb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F46E5] text-sm font-bold text-white shadow-xs">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-sm font-bold text-white shadow-xs">
                 👤
               </div>
               <div>
@@ -775,7 +815,7 @@ export function ActiveTestShell({
             {/* Question Palette Title & Counter */}
             <div className="mt-4 flex items-center justify-between">
               <h2 className="text-sm font-bold text-[#0F172A]">Question palette</h2>
-              <span className="rounded bg-[#EEF2FF] px-2 py-0.5 text-xs font-bold text-[#4F46E5]">
+              <span className="rounded bg-[#EFF6FF] px-2 py-0.5 text-xs font-bold text-[#2563EB] border border-[#BFDBFE]">
                 {currentIndex + 1} / {questions.length}
               </span>
             </div>
@@ -792,7 +832,7 @@ export function ActiveTestShell({
                 let isAnsweredAndMarked = false;
 
                 if (isAns && isMrk) {
-                  style = "bg-[#4F46E5] border-[#4338CA] text-white";
+                  style = "bg-[#2563EB] border-[#1D4ED8] text-white";
                   isAnsweredAndMarked = true;
                 } else if (!isAns && isMrk) {
                   style = "bg-[#F59E0B] border-[#D97706] text-white";
@@ -873,13 +913,13 @@ export function ActiveTestShell({
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="relative flex h-5 w-5 items-center justify-center rounded bg-[#4F46E5] font-bold text-white text-[10px]">
+                    <span className="relative flex h-5 w-5 items-center justify-center rounded bg-[#2563EB] font-bold text-white text-[10px]">
                       ★
                       <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[#10B981]" />
                     </span>
                     <span className="text-[#0F172A] font-medium">Answered & Marked</span>
                   </div>
-                  <span className="font-bold text-[#4F46E5]">{paletteStats.answeredAndMarked}</span>
+                  <span className="font-bold text-[#2563EB]">{paletteStats.answeredAndMarked}</span>
                 </div>
               </div>
             </div>
@@ -891,7 +931,7 @@ export function ActiveTestShell({
               type="button"
               onClick={() => setShowSubmitConfirmation(true)}
               disabled={submitState === "submitting" || submitState === "submitted"}
-              className="w-full rounded-xl bg-[#4F46E5] py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#4338CA] disabled:opacity-50"
+              className="w-full rounded-xl bg-[#2563EB] py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#1D4ED8] disabled:opacity-50"
             >
               Submit Entire Test
             </button>
@@ -918,17 +958,17 @@ function formatTime(totalSeconds: number) {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-function formatSaveState(saveState: "idle" | "saving" | "saved" | "failed") {
+function formatSaveState(saveState: "idle" | "saving" | "saved" | "offline") {
   if (saveState === "saving") {
-    return "Saving";
+    return "Saving...";
   }
 
   if (saveState === "saved") {
-    return "Saved";
+    return "Saved ✓";
   }
 
-  if (saveState === "failed") {
-    return "Save failed";
+  if (saveState === "offline") {
+    return "Offline (Sync Pending)";
   }
 
   return "Ready";

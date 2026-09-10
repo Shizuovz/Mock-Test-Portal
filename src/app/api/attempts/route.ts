@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   AttemptAuthError,
   AttemptNotFoundError,
+  AttemptPaymentRequiredError,
   startAttempt,
 } from "@/lib/test-engine/start-attempt";
 
@@ -21,6 +22,10 @@ export async function POST(request: Request) {
 
     if (error instanceof AttemptNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+
+    if (error instanceof AttemptPaymentRequiredError) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
     }
 
     return NextResponse.json({ error: "Unable to start attempt" }, { status: 400 });

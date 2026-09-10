@@ -29,12 +29,28 @@ export async function POST(request: Request, context: SubmitAttemptRouteContext)
 
   if (!attemptId.startsWith("local-")) {
     try {
+      const headerGuestId = request.headers.get("x-guest-session-id");
+      const guestSessionId = headerGuestId || bodyJson.guestSessionId;
+
       const result = await submitAttempt({
         attemptId,
         questionTimeSpent: bodyJson.questionTimeSpent,
+        guestSessionId,
       });
 
-      return NextResponse.json(result);
+      const response = NextResponse.json(result);
+
+      if (guestSessionId) {
+        response.cookies.set("guest_session_id", String(guestSessionId), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365,
+        });
+      }
+
+      return response;
     } catch (error) {
       if (error instanceof AttemptAuthError) {
         return NextResponse.json({ error: error.message }, { status: 401 });

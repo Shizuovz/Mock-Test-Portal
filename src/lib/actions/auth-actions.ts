@@ -57,9 +57,27 @@ export async function requestPasswordReset(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email);
 
-  if (error) {
-    redirect(`/forgot-password?error=${encodeURIComponent(error.message)}`);
+  redirect("/forgot-password?success=Check+your+email+for+the+password+reset+link.");
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  if (!password || password.length < 6) {
+    redirect("/update-password?error=Password+must+be+at+least+6+characters+long." as any);
   }
 
-  redirect("/forgot-password?success=Check+your+email+for+the+password+reset+link.");
+  if (password !== confirmPassword) {
+    redirect("/update-password?error=Passwords+do+not+match." as any);
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    redirect(`/update-password?error=${encodeURIComponent(error.message)}` as any);
+  }
+
+  redirect("/login?message=Password+updated+successfully.+Please+sign+in+with+your+new+password." as any);
 }

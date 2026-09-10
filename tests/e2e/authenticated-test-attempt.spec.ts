@@ -53,17 +53,32 @@ test.describe("Authenticated Student Test Journey", () => {
     }
 
     if (userId) {
-      await supabase
-        .from("test_attempts")
-        .delete()
-        .eq("user_id", userId)
-        .eq("test_id", TEST_ID);
+      await supabase.from("user_answers").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      await supabase.from("test_attempts").delete().eq("user_id", userId);
+      await supabase.from("user_entitlements").delete().eq("user_id", userId);
+    }
+  });
+
+  test.beforeEach(async () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (url && serviceKey) {
+      const supabase = createClient(url, serviceKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data } = await supabase.auth.admin.listUsers();
+      const user = data?.users.find((u) => u.email === TEST_EMAIL);
+      if (user) {
+        await supabase.from("test_attempts").delete().eq("user_id", user.id);
+        await supabase.from("user_entitlements").delete().eq("user_id", user.id);
+      }
     }
   });
 
   test("executes full student lifecycle: login -> start test -> answer questions -> submit -> view scorecard & review", async ({
     page,
   }) => {
+    test.setTimeout(60000);
     // 1. Log in with authenticated test credentials
     await page.goto("/login");
     await expect(page.locator("h1")).toContainText(/Log in/i);

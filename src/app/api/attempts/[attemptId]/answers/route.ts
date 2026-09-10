@@ -28,12 +28,29 @@ export async function POST(request: Request, context: SaveAnswerRouteContext) {
   }
 
   try {
+    const body = await request.json();
+    const headerGuestId = request.headers.get("x-guest-session-id");
+    const guestSessionId = headerGuestId || body.guestSessionId;
+
     const savedAnswer = await saveAnswer({
-      ...(await request.json()),
+      ...body,
       attemptId,
+      guestSessionId,
     });
 
-    return NextResponse.json(savedAnswer);
+    const response = NextResponse.json(savedAnswer);
+
+    if (guestSessionId) {
+      response.cookies.set("guest_session_id", String(guestSessionId), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+      });
+    }
+
+    return response;
   } catch (error) {
     if (error instanceof AttemptAuthError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

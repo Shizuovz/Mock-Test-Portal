@@ -22,11 +22,10 @@ test.describe("Student Discovery & Navigation Flow", () => {
     await expect(testCard).toBeVisible();
     await expect(testCard).toContainText(/Duration: 10 mins/i);
 
-    // 2. Click Start Test / navigate to active test (unauthenticated gate)
+    // 2. Click Start Test / navigate to active test (guest free mock access)
     await page.goto("/test/55555555-5555-4555-8555-555555555555");
-    await expect(page.locator("h1")).toContainText(/Log in to start this test/i);
-    await expect(page.locator("text=Attempts are tied to your account")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Go to login/i })).toBeVisible();
+    await expect(page.locator("h1")).toContainText(/SSC CGL Percentage Mini Mock/i);
+    await expect(page.locator("text=CBT Proctored Session")).toBeVisible();
   });
 
   test("validates authentication screens", async ({ page }) => {

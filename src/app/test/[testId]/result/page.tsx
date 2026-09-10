@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { ResultReviewShell } from "@/components/test/result-review-shell";
+import { SiteHeader } from "@/components/layout/site-header";
 import { getCatalogTestById } from "@/lib/content/catalog";
 import {
   getLatestSubmittedResultForTest,
   getSubmittedResultForAttempt,
 } from "@/lib/test-engine/result";
+import { getPortalAccessStatus } from "@/lib/billing/billing-service";
 
 export const dynamic = "force-dynamic";
 
@@ -33,5 +35,16 @@ export default async function TestResultPage({
     ? await getSubmittedResultForAttempt(attemptId)
     : await getLatestSubmittedResultForTest(test.id);
 
-  return <ResultReviewShell testId={test.id} serverPayload={serverPayload} />;
+  const access = await getPortalAccessStatus();
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A]">
+      <div className="print:hidden">
+        <SiteHeader />
+      </div>
+      <div className="flex-1">
+        <ResultReviewShell testId={test.id} serverPayload={serverPayload} access={access} />
+      </div>
+    </div>
+  );
 }

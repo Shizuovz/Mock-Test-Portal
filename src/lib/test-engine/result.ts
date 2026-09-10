@@ -26,11 +26,13 @@ async function getSubmittedResult({
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
-    error: userError,
   } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    throw new AttemptAuthError("You must be signed in to view results.");
+  const { getGuestSessionId } = await import("@/lib/auth/guest-session");
+  const guestSessionId = await getGuestSessionId();
+
+  if (!user && !guestSessionId && !attemptId) {
+    throw new AttemptAuthError("You must be signed in or have an active session to view results.");
   }
 
   const db = createSupabaseAdminClient();
@@ -39,10 +41,17 @@ async function getSubmittedResult({
     .select(
       "id, test_id, status, started_at, submitted_at, score, max_score, correct_count, wrong_count, unanswered_count, time_taken_seconds, tests(name)",
     )
-    .eq("user_id", user.id)
     .in("status", ["submitted", "expired"])
     .order("submitted_at", { ascending: false })
     .limit(1);
+
+  if (attemptId) {
+    query = query.eq("id", attemptId);
+  } else if (user) {
+    query = query.eq("user_id", user.id);
+  } else if (guestSessionId) {
+    query = query.eq("guest_session_id", guestSessionId);
+  }
 
   if (attemptId) {
     query = query.eq("id", attemptId);

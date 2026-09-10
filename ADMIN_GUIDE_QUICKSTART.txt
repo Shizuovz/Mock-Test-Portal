@@ -1,0 +1,62 @@
+==================================================
+QUICK START GUIDE - SETTING UP EXAMS & QUESTIONS
+==================================================
+
+Follow these 5 simple steps in order:
+
+STEP 1: ADD THE EXAM
+--------------------
+Go to: /admin/exams
+1. Enter Name (e.g., "NSSB CGL") and Slug (e.g., "nssb-cgl").
+2. Check "Active".
+3. Click "Create exam".
+
+
+STEP 2: ADD SUBJECT & TOPIC
+---------------------------
+Questions need a Subject and a Topic.
+
+A. Go to: /admin/subjects
+   - Select your Exam.
+   - Enter Subject Name (e.g., "Maths" or "General Awareness").
+   - Click "Create subject".
+
+B. Go to: /admin/topics
+   - Select your Subject.
+   - Enter Topic Name (e.g., "Percentage" or "History").
+   - Click "Create topic".
+
+
+STEP 3: ADD QUESTIONS
+---------------------
+Go to: /admin/questions
+1. Select the Topic.
+2. Type the Question and 4 Options (A, B, C, D).
+3. Choose the Correct Option.
+4. Add an Explanation (shown after test completion).
+5. Set Marks (e.g., 2) and Negative Marks (e.g., 0.5).
+6. Click "Save Question".
+
+* Tip: For bulk upload via Excel/CSV, go to /admin/questions/import
+
+
+STEP 4: CREATE THE TEST
+-----------------------
+Go to: /admin/tests
+1. Select your Exam.
+2. Enter Test Name (e.g., "Mock Test 1") and Slug ("mock-test-1").
+3. Set Duration in minutes (e.g., 60).
+4. Set Total Marks (e.g., 100) and Passing Marks (e.g., 40).
+5. Leave "Published" unchecked for now.
+6. Click "Create test".
+
+
+STEP 5: ADD QUESTIONS TO TEST & PUBLISH
+---------------------------------------
+1. In /admin/tests, find your test and click "Open Builder".
+2. Select questions from the dropdown, set their order (1, 2, 3...), and click "Add to test".
+3. Once done, go back to /admin/tests.
+4. Check the "Published" box next to your test and click "Save".
+
+Done! The test is now live for students to take at /exams.
+==================================================

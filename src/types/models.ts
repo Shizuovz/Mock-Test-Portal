@@ -101,9 +101,17 @@ export type TestQuestion = {
   createdAt: string;
 };
 
+export type AccessType =
+  | "guest_free"
+  | "registered_free"
+  | "subscription"
+  | "admin_granted";
+
 export type TestAttempt = {
   id: string;
-  userId: string;
+  userId: string | null;
+  guestSessionId?: string | null;
+  accessType: AccessType;
   testId: string;
   status: AttemptStatus;
   startedAt: string;
@@ -115,6 +123,60 @@ export type TestAttempt = {
   wrongCount: number | null;
   unansweredCount: number | null;
   timeTakenSeconds: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UserEntitlement = {
+  userId: string;
+  freeAttemptLimit: number;
+  freeAttemptsUsed: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type GuestSession = {
+  id: string;
+  freeAttemptLimit: number;
+  freeAttemptsUsed: number;
+  createdAt: string;
+  lastSeenAt: string;
+};
+
+export type Subscription = {
+  id: string;
+  userId: string;
+  planId: string | null;
+  status: "active" | "expired" | "cancelled";
+  startsAt: string;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Payment = {
+  id: string;
+  userId: string;
+  subscriptionId: string | null;
+  amountPaise: number;
+  currency: string;
+  provider: string;
+  providerOrderId: string | null;
+  providerPaymentId: string | null;
+  status: "pending" | "captured" | "failed" | "refunded";
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Plan = {
+  id: string;
+  code: string;
+  name: string;
+  pricePaise: number;
+  durationDays: number;
+  description: string | null;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };

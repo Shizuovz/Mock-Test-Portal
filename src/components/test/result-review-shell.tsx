@@ -11,6 +11,8 @@ import {
   type PacingQuestionItem,
 } from "@/lib/test-engine/pacing";
 
+import type { PortalAccessStatus } from "@/lib/billing/billing-service";
+
 type ReviewQuestion = {
   questionId: string;
   questionText: string;
@@ -37,6 +39,7 @@ export type ResultPayload = {
 type ResultReviewShellProps = {
   testId: string;
   serverPayload?: ResultPayload | null;
+  access?: PortalAccessStatus | null;
 };
 
 const resultCache = new Map<
@@ -47,31 +50,42 @@ const resultCache = new Map<
   }
 >();
 
-export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellProps) {
+export function ResultReviewShell({ testId, serverPayload, access }: ResultReviewShellProps) {
   const localPayload = useSyncExternalStore(
     subscribeToStorage,
     () => readLocalResult(testId),
     () => null,
   );
   const payload = serverPayload ?? localPayload;
+  const [filter, setFilter] = useState<"all" | "correct" | "wrong" | "unanswered">("all");
+
+  const isGuest = !access || access.isGuest;
 
   if (!payload) {
     return (
       <main className="min-h-screen bg-[#F8FAFC] px-6 py-8 text-[#0F172A]">
         <section className="mx-auto max-w-4xl rounded-xl border border-[#E2E8F0] bg-white p-8 shadow-xs">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">
             Result Unavailable
           </p>
           <h1 className="mt-3 text-2xl font-bold text-[#0F172A]">No submitted attempt found</h1>
           <p className="mt-2 text-sm text-[#64748B]">
             Complete and submit a test attempt first, then your evaluation will appear here.
           </p>
-          <Link
-            href={`/test/${testId}`}
-            className="mt-6 inline-flex rounded-xl bg-[#4F46E5] px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-[#4338CA]"
-          >
-            Return to Test
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href={`/test/${testId}`}
+              className="inline-flex rounded-xl bg-[#2563EB] px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+            >
+              Return to Test
+            </Link>
+            <Link
+              href="/exams"
+              className="inline-flex rounded-xl border border-[#E2E8F0] bg-white px-5 py-2.5 text-sm font-semibold text-[#0F172A] shadow-xs hover:bg-[#F8FAFC]"
+            >
+              Browse All NSSB Exams
+            </Link>
+          </div>
         </section>
       </main>
     );
@@ -81,8 +95,6 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
     payload.result.maxScore > 0
       ? Math.round((payload.result.score / payload.result.maxScore) * 100)
       : 0;
-
-  const [filter, setFilter] = useState<"all" | "correct" | "wrong" | "unanswered">("all");
 
   const correctCount = payload.review.filter((q) => q.isCorrect).length;
   const wrongCount = payload.review.filter((q) => q.selectedOptionId !== null && !q.isCorrect).length;
@@ -124,7 +136,7 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
   });
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] px-6 py-8 text-[#0F172A]">
+    <main className="bg-[#F8FAFC] px-4 sm:px-6 py-8 text-[#0F172A]">
       <section className="mx-auto max-w-6xl">
         {/* 1. Official Print Scorecard Header (Visible ONLY during print / PDF export) */}
         <div className="hidden print:block mb-6 border-b-2 border-black pb-4">
@@ -146,7 +158,7 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
         {/* 2. Interactive Web Header (Hidden on print) */}
         <div className="flex flex-col gap-4 border-b border-[#E2E8F0] pb-6 sm:flex-row sm:items-center sm:justify-between print:hidden">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">
               Examination Evaluation
             </p>
             <h1 className="mt-2 text-3xl font-extrabold text-[#0F172A]">{payload.testName}</h1>
@@ -154,11 +166,11 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
               Attempt evaluated with tamper-proof server-side negative marking logic.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3.5 py-2 text-xs font-semibold text-[#4F46E5] shadow-xs transition hover:bg-[#EEF2FF] print:hidden"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3.5 py-2 text-xs font-semibold text-[#2563EB] shadow-xs transition hover:bg-[#EFF6FF] print:hidden"
               title="Print scorecard or save as PDF"
             >
               <span>🖨️ Print / Save PDF</span>
@@ -169,12 +181,29 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
             >
               ★ Saved Bookmarks
             </Link>
-            <Link
-              href="/dashboard/tests"
-              className="rounded-lg bg-[#4F46E5] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#4338CA]"
-            >
-              Take Another Test
-            </Link>
+            {isGuest ? (
+              <Link
+                href="/register?redirect=/exams"
+                className="group relative inline-flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-[#1D4ED8] hover:shadow-lg active:scale-98"
+              >
+                <span className="flex h-1.5 w-1.5 rounded-full bg-[#93C5FD] animate-ping" />
+                <span>Take Another Test (Unlock 3 Free) →</span>
+              </Link>
+            ) : access?.hasActiveSubscription ? (
+              <Link
+                href="/exams"
+                className="rounded-lg bg-[#2563EB] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+              >
+                Take Another Test →
+              </Link>
+            ) : (
+              <Link
+                href="/exams"
+                className="rounded-lg bg-[#2563EB] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+              >
+                Take Another Test ({access?.freeAttemptsRemaining ?? 0} Free Left) →
+              </Link>
+            )}
           </div>
         </div>
 
@@ -187,6 +216,86 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
           <ResultStat label="Unanswered" value={String(payload.result.unansweredCount)} />
         </div>
 
+        {/* 3.1 Enticing Next-Step Card for Unsigned / Guest Users */}
+        {isGuest ? (
+          <section className="mt-6 overflow-hidden rounded-2xl border-2 border-[#BFDBFE] bg-gradient-to-br from-[#EFF6FF] via-white to-[#F0FDF4] p-6 shadow-sm print:hidden">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2563EB] px-3 py-0.5 text-xs font-bold text-white shadow-xs">
+                    🎁 Free Trial Completed
+                  </span>
+                  <span className="rounded-full bg-[#DCFCE7] px-2.5 py-0.5 text-xs font-bold text-[#16A34A] border border-[#BBF7D0]">
+                    +3 More Free Full Tests Waiting
+                  </span>
+                </div>
+                <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#0F172A]">
+                  Ready to take your next NSSB mock test?
+                </h2>
+                <p className="text-sm text-[#475569] max-w-xl leading-relaxed">
+                  You just finished your first free guest test. Create a free account in 30 seconds to immediately unlock <strong className="text-[#0F172A]">3 MORE full-length NSSB mock exams</strong> with detailed solutions and ranking analytics.
+                </p>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-1 text-xs font-semibold text-[#64748B]">
+                  <span className="inline-flex items-center gap-1.5 text-[#16A34A]">
+                    ✓ 3 Full NSSB Mock Tests Free
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[#16A34A]">
+                    ✓ Full Solutions &amp; KaTeX Explanations
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[#16A34A]">
+                    ✓ 100% Free • No Credit Card Required
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0">
+                <Link
+                  href="/register?redirect=/exams"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#1D4ED8] hover:shadow-lg active:scale-98"
+                >
+                  <span>Unlock 3 Free Tests Now</span>
+                  <span>→</span>
+                </Link>
+                <Link
+                  href="/exams"
+                  className="inline-flex items-center justify-center rounded-xl border border-[#CBD5E1] bg-white px-5 py-2.5 text-xs font-semibold text-[#475569] transition hover:bg-[#F8FAFC] hover:text-[#0F172A]"
+                >
+                  Browse NSSB Exam Catalog
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : !access?.hasActiveSubscription ? (
+          <section className="mt-6 overflow-hidden rounded-2xl border border-[#DBEAFE] bg-[#EFF6FF] p-5 shadow-xs print:hidden">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">
+                  Practice Progress
+                </span>
+                <h3 className="mt-1 text-base font-bold text-[#0F172A]">
+                  You have {access?.freeAttemptsRemaining ?? 0} of {access?.freeAttemptsLimit ?? 3} free test attempts remaining
+                </h3>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  Upgrade to the Annual Pro Pass (₹499/Year) for unlimited access to all NSSB test series and solution archives.
+                </p>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Link
+                  href="/pricing"
+                  className="rounded-xl border border-[#2563EB] bg-white px-4 py-2 text-xs font-bold text-[#2563EB] transition hover:bg-[#EFF6FF]"
+                >
+                  Get Pro (₹499/yr)
+                </Link>
+                <Link
+                  href="/exams"
+                  className="rounded-xl bg-[#2563EB] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+                >
+                  Take Next Test →
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* 3.5 Pacing & Time Diagnostics */}
         <section className="mt-6 rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs print:border print:border-black print:p-3 print:my-4">
           <div className="flex flex-col gap-2 border-b border-[#F1F5F9] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -198,7 +307,7 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
                 Active time distribution across questions to evaluate speed vs. accuracy
               </p>
             </div>
-            <span className="w-fit rounded-full bg-[#EEF2FF] px-3 py-1 text-xs font-semibold text-[#4F46E5]">
+            <span className="w-fit rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-semibold text-[#2563EB] border border-[#BFDBFE]">
               Total Time: {formatDuration(effectiveTotalSeconds)}
             </span>
           </div>
@@ -249,8 +358,8 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
             onClick={() => setFilter("all")}
             className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
               filter === "all"
-                ? "bg-[#4F46E5] text-white shadow-xs"
-                : "border border-[#E2E8F0] bg-white text-[#64748B] hover:bg-[#EEF2FF]/40 hover:text-[#0F172A]"
+                ? "bg-[#2563EB] text-white shadow-xs"
+                : "border border-[#E2E8F0] bg-white text-[#64748B] hover:bg-[#EFF6FF]/40 hover:text-[#0F172A]"
             }`}
           >
             All ({payload.review.length})
@@ -371,6 +480,45 @@ export function ResultReviewShell({ testId, serverPayload }: ResultReviewShellPr
               );
             })
           )}
+        </section>
+
+        {/* 6. Closing Action Section */}
+        <section className="mt-10 rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 text-center shadow-xs print:hidden">
+          <div className="mx-auto max-w-xl">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0F172A]">
+              {isGuest
+                ? "Ready to continue your NSSB preparation?"
+                : "Keep your NSSB exam prep momentum going!"}
+            </h3>
+            <p className="mt-2 text-sm text-[#64748B] leading-relaxed">
+              {isGuest
+                ? "Create your free account today to take 3 more full-length mock tests, access detailed solution keys, and track your topic-wise accuracy."
+                : "Choose your next NSSB subject test or full mock examination from the official exam catalog."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              {isGuest ? (
+                <Link
+                  href="/register?redirect=/exams"
+                  className="rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#1D4ED8] hover:shadow-lg active:scale-98"
+                >
+                  Unlock 3 More Free Tests (Sign Up Free) →
+                </Link>
+              ) : (
+                <Link
+                  href="/exams"
+                  className="rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#1D4ED8]"
+                >
+                  Browse All NSSB Exams →
+                </Link>
+              )}
+              <Link
+                href="/dashboard/bookmarks"
+                className="rounded-xl border border-[#CBD5E1] bg-white px-5 py-3 text-sm font-semibold text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]"
+              >
+                Review Saved Bookmarks
+              </Link>
+            </div>
+          </div>
         </section>
       </section>
     </main>

@@ -1,0 +1,158 @@
+================================================================================
+ONLINE MOCK TEST PORTAL - ADMIN PANEL USER GUIDE
+Step-by-Step Instructions for Creating Exams, Subjects, Questions & Mock Tests
+================================================================================
+
+1. PLATFORM ARCHITECTURE & HIERARCHY
+--------------------------------------------------------------------------------
+To keep content well-organized and enable subject/topic-wise analytics,
+the platform organizes exam content in the following order:
+
+  EXAM (e.g., NSSB CGL, NSSB CHSL)
+    │
+    └── SUBJECT (e.g., Quantitative Aptitude, General Awareness)
+          │
+          └── TOPIC (e.g., Percentages, Indian Polity, Modern History)
+                │
+                └── QUESTION BANK (MCQs with 4 options, answer, explanation)
+
+  MOCK TEST (e.g., NSSB CGL Mock Test 01)
+    │
+    └── TEST BUILDER (Attaches questions from the Question Bank with custom
+                      ordering, positive marks, and negative penalties)
+
+
+================================================================================
+2. STEP-BY-STEP WORKFLOW
+================================================================================
+
+STEP 1: CREATE AN EXAM TRACK
+--------------------------------------------------------------------------------
+1. Log in with an admin account and open:
+   URL: /admin/exams
+
+2. In the "Create exam" section, fill in:
+   - Name: The public exam title (e.g., "NSSB CGL" or "NSSB CHSL")
+   - Slug: URL identifier in lowercase (e.g., "nssb-cgl")
+   - Description: Overview of the exam syllabus, eligibility, and pattern
+   - Active: Check this box to make the exam track visible to students
+
+3. Click "Create exam".
+
+
+STEP 2: CREATE SUBJECTS AND TOPICS
+--------------------------------------------------------------------------------
+Every question must belong to a Topic, which belongs to a Subject.
+
+A. Create Subjects:
+   1. Open: /admin/subjects
+   2. Select the parent Exam from the dropdown.
+   3. Enter:
+      - Name (e.g., "General Awareness", "Quantitative Aptitude")
+      - Slug (e.g., "general-awareness")
+      - Order (numeric sort index, e.g., 1, 2, 3)
+      - Description (optional)
+   4. Click "Create subject".
+
+B. Create Topics:
+   1. Open: /admin/topics
+   2. Select the parent Subject from the dropdown.
+   3. Enter:
+      - Name (e.g., "Indian Polity", "Arithmetic", "Current Affairs")
+      - Slug (e.g., "indian-polity")
+      - Order (numeric sort index, e.g., 1, 2, 3)
+   4. Click "Create topic".
+
+
+STEP 3: ADD QUESTIONS TO THE QUESTION BANK
+--------------------------------------------------------------------------------
+You can add questions either one-by-one or in bulk via CSV spreadsheets.
+
+METHOD A: Manual Question Entry
+1. Open: /admin/questions
+2. Fill in the question creation form:
+   - Topic: Select the appropriate topic from the dropdown.
+   - Question Statement: Full text of the question.
+   - Option A, Option B, Option C, Option D: The four answer choices.
+   - Correct Option: Select A, B, C, or D.
+   - Explanation: Detailed solution displayed on the student scorecard.
+   - Difficulty: Choose "easy", "medium", or "hard".
+   - Default Marks: Standard score for correct answer (e.g., 2.0).
+   - Default Negative Marks: Penalty for wrong answer (e.g., 0.5).
+3. Click "Save Question".
+
+METHOD B: Bulk CSV Import
+1. Open: /admin/questions/import
+2. Prepare a CSV spreadsheet with the following exact columns:
+   exam,subject,topic,question_text,option_a,option_b,option_c,option_d,correct_option,explanation,difficulty,marks,negative_marks
+
+   Example Row:
+   NSSB CGL,Quantitative Aptitude,Percentage,"What is 25% of 240?",50,60,70,80,B,"25% of 240 = 60",easy,2,0.5
+
+3. Either paste the CSV text into the box or upload the .csv file.
+4. Review the live row validation preview.
+5. Click "Import All Valid Questions".
+
+
+STEP 4: CREATE A MOCK TEST PAPER
+--------------------------------------------------------------------------------
+1. Open: /admin/tests
+2. In the "Create test" section, configure the test parameters:
+   - Exam: Select the exam this mock test belongs to.
+   - Name: Title of the mock test (e.g., "NSSB CGL Full Mock 01").
+   - Slug: URL identifier (e.g., "nssb-cgl-mock-01").
+   - Duration (Minutes): Total test duration (e.g., 60, 90, or 120 minutes).
+   - Total Marks: Full marks for the test (e.g., 100 or 200).
+   - Passing Marks: Benchmark minimum marks required to pass (e.g., 40).
+   - Max Attempts:
+       * Set to 1: Strict one-time simulation (ideal for live tests).
+       * Set to 0 or leave blank: Unlimited retakes allowed.
+   - Score Display Mode:
+       * "best": Displays the student's highest score on leaderboards.
+       * "latest": Displays the student's most recent attempt.
+   - Published: Leave UNCHECKED (Draft) until questions are attached.
+3. Click "Create test".
+
+
+STEP 5: ASSEMBLE QUESTIONS IN TEST BUILDER
+--------------------------------------------------------------------------------
+1. On /admin/tests, find your test in the "Existing tests" list.
+2. Click "Open Builder" (URL: /admin/tests/[testId]/builder).
+3. In the "Add question" section:
+   - Select a question from the "Available questions" dropdown.
+   - Specify "Order" (e.g., 1 for Question 1, 2 for Question 2, etc.).
+   - Set the Marks and Negative Marks for this specific question in this test.
+   - Click "Add to test".
+4. Repeat until all questions are attached.
+5. Verify the question sequence and mark allocations in the assigned list.
+6. Once complete:
+   - Click "Back to tests" (or return to /admin/tests).
+   - Locate the test, check the "Published" box, and click "Save".
+
+
+STEP 6: STUDENT PORTAL VERIFICATION
+--------------------------------------------------------------------------------
+1. Go to the public website:
+   - Homepage: /
+   - Exam Catalog: /exams or /exams/[examSlug]
+2. The newly published test will appear with duration, question count, and
+   an "Attempt Test" button.
+3. Clicking "Attempt Test" opens the instructions screen and launches
+   the full Computer-Based Test (CBT) terminal with:
+   - Countdown timer
+   - Question palette (Answered, Marked for Review, Not Visited)
+   - Auto-save on each option selection
+   - Instant scorecard, percentile, pacing breakdown, and solutions on submit.
+
+
+================================================================================
+3. ADMIN ROLES & SECURITY
+================================================================================
+Only users with role = 'admin' or role = 'editor' can access the admin pages.
+To promote a user to admin:
+1. Have the user register an account at /register.
+2. Go to /admin/users or execute in Supabase SQL Editor:
+   UPDATE public.profiles
+   SET role = 'admin'
+   WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@example.com');
+================================================================================

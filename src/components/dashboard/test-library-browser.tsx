@@ -11,6 +11,7 @@ type TestLibraryBrowserProps = {
   initialSearch?: string;
   initialExam?: string;
   initialStatus?: "all" | "completed" | "uncompleted";
+  canStartAttempt?: boolean;
 };
 
 export function TestLibraryBrowser({
@@ -19,6 +20,7 @@ export function TestLibraryBrowser({
   initialSearch = "",
   initialExam = "all",
   initialStatus = "all",
+  canStartAttempt = true,
 }: TestLibraryBrowserProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -115,6 +117,29 @@ export function TestLibraryBrowser({
 
   return (
     <div className="mt-8 space-y-6">
+      {/* Quota Exhausted Banner */}
+      {!canStartAttempt && (
+        <div className="rounded-xl border border-[#FED7AA] bg-[#FFF7ED] p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span className="rounded-md bg-[#EA580C] px-2.5 py-0.5 text-xs font-bold text-white">
+              Free Quota Completed (3/3)
+            </span>
+            <h3 className="mt-1.5 text-base font-bold text-[#9A3412]">
+              You have completed all 3 free mock tests.
+            </h3>
+            <p className="text-xs text-[#7C2D12]">
+              Upgrade to our 1-year pass to unlock all mock test tracks, sectional sets, and unlimited reattempts.
+            </p>
+          </div>
+          <Link
+            href="/pricing"
+            className="inline-flex items-center rounded-lg bg-[#4F46E5] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#4338CA] transition shrink-0"
+          >
+            Upgrade to Pro (₹499) ➔
+          </Link>
+        </div>
+      )}
+
       {/* 1. Search Bar & Controls Frame */}
       <div className="rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -403,6 +428,23 @@ export function TestLibraryBrowser({
                   >
                     Review Past Results (Limit Reached)
                   </Link>
+                ) : !canStartAttempt ? (
+                  <div className="flex gap-2">
+                    <Link
+                      href="/pricing"
+                      className="flex-1 rounded-lg bg-[#4F46E5] py-2.5 text-center text-sm font-semibold text-white transition hover:bg-[#4338CA]"
+                    >
+                      🔒 Upgrade to Pro (₹499)
+                    </Link>
+                    {test.attemptsCount > 0 && (
+                      <Link
+                        href={`/test/${test.id}/result`}
+                        className="rounded-lg border border-[#E2E8F0] px-3.5 py-2.5 text-center text-sm font-semibold text-[#64748B] transition hover:bg-[#F8FAFC] hover:text-[#0F172A]"
+                      >
+                        Result
+                      </Link>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex gap-2">
                     <Link

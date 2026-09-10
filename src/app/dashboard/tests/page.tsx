@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAvailableTests } from "@/lib/dashboard/available-tests";
+import { getPortalAccessStatus } from "@/lib/billing/billing-service";
 import { TestLibraryBrowser } from "@/components/dashboard/test-library-browser";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ type DashboardTestsPageProps = {
 
 export default async function DashboardTestsPage({ searchParams }: DashboardTestsPageProps) {
   const params = await searchParams;
+  const access = await getPortalAccessStatus();
   const { tests, exams } = await getAvailableTests({
     examSlug: params.exam,
     status: params.status,
@@ -45,6 +47,7 @@ export default async function DashboardTestsPage({ searchParams }: DashboardTest
           initialSearch={params.q ?? ""}
           initialExam={params.exam ?? "all"}
           initialStatus={params.status ?? "all"}
+          canStartAttempt={access.canStartAttempt}
         />
       </section>
     </main>

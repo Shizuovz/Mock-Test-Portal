@@ -1,149 +1,20 @@
 import { startAttemptSchema } from "@/lib/validation/attempt.schema";
-import { getSafeQuestionsForTest, getTestById } from "@/lib/content/mock-data";
-import { env, getSupabasePublishableKey } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { calculateExpiresAt } from "@/lib/test-engine/timer";
+import { getOrCreateGuestSessionId } from "@/lib/auth/guest-session";
 import type { SafeQuestionPayload } from "@/types/models";
-
-export async function startAttempt(input: unknown) {
-  const parsed = startAttemptSchema.parse(input);
-
-  if (!hasSupabaseConfig()) {
-    return startLocalAttempt(parsed.testId);
-  }
-
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    throw new AttemptAuthError("You must be signed in to start a test.");
-  }
-
-  const db = createSupabaseAdminClient();
-  let { data: test, error: testError } = await db
-    .from("tests")
-    .select("id, name, duration_minutes, is_published, max_attempts")
-    .eq("id", parsed.testId)
-    .eq("is_published", true)
-    .single();
-
-  if (
-    testError &&
-    (testError.code === "PGRST204" ||
-      testError.message.includes("does not exist") ||
-      testError.message.includes("Could not find the"))
-  ) {
-    const retry = await db
-      .from("tests")
-      .select("id, name, duration_minutes, is_published")
-      .eq("id", parsed.testId)
-      .eq("is_published", true)
-      .single();
-    test = retry.data as typeof test;
-    testError = retry.error;
-  }
-
-  if (testError || !test) {
-    throw new AttemptNotFoundError("Published test not found.");
-  }
-
-  const { data: existingAttempt, error: existingAttemptError } = await db
-    .from("test_attempts")
-    .select("id, started_at, expires_at")
-    .eq("user_id", user.id)
-    .eq("test_id", test.id)
-    .eq("status", "in_progress")
-    .gt("expires_at", new Date().toISOString())
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (existingAttemptError) {
-    throw new Error("Unable to load active attempt.");
-  }
-
-  if (existingAttempt) {
-    const [questions, initialAnswers] = await Promise.all([
-      getSafeQuestionsFromSupabase(db, test.id),
-      getSavedAttemptStateFromSupabase(db, existingAttempt.id),
-    ]);
-
-    return {
-      attemptId: existingAttempt.id,
-      testId: test.id,
-      testName: test.name,
-      startedAt: existingAttempt.started_at,
-      expiresAt: existingAttempt.expires_at,
-      questions,
-      initialAnswers: initialAnswers.answers,
-      initialMarkedForReview: initialAnswers.markedForReview,
-      mode: "supabase" as const,
-    };
-  }
-
-  const testRecord = test as unknown as Record<string, unknown>;
-  const maxAttempts =
-    testRecord.max_attempts !== undefined && testRecord.max_attempts !== null
-      ? Number(testRecord.max_attempts)
-      : null;
-
-  if (maxAttempts !== null && maxAttempts > 0) {
-    const { count, error: countError } = await db
-      .from("test_attempts")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("test_id", test.id)
-      .in("status", ["submitted", "expired"]);
-
-    if (!countError && count !== null && count >= maxAttempts) {
-      throw new AttemptLimitReachedError(
-        maxAttempts,
-        `Attempt limit reached. This test allows a maximum of ${maxAttempts} attempt${maxAttempts === 1 ? "" : "s"}.`,
-      );
-    }
-  }
-
-  const startedAt = new Date();
-  const expiresAt = calculateExpiresAt(startedAt, test.duration_minutes);
-  const { data: attempt, error: attemptError } = await db
-    .from("test_attempts")
-    .insert({
-      user_id: user.id,
-      test_id: test.id,
-      status: "in_progress",
-      started_at: startedAt.toISOString(),
-      expires_at: expiresAt.toISOString(),
-    })
-    .select("id, started_at, expires_at")
-    .single();
-
-  if (attemptError || !attempt) {
-    throw new Error("Unable to create test attempt.");
-  }
-
-  const questions = await getSafeQuestionsFromSupabase(db, test.id);
-
-  return {
-    attemptId: attempt.id,
-    testId: test.id,
-    testName: test.name,
-    startedAt: attempt.started_at,
-    expiresAt: attempt.expires_at,
-    questions,
-    initialAnswers: {},
-    initialMarkedForReview: {},
-    mode: "supabase" as const,
-  };
-}
-
-export type StartedAttempt = Awaited<ReturnType<typeof startAttempt>>;
 
 export class AttemptAuthError extends Error {}
 export class AttemptNotFoundError extends Error {}
+export class AttemptPaymentRequiredError extends Error {
+  constructor(message?: string) {
+    super(
+      message ??
+        "You've used all 3 free mock tests. Unlock all mock tests for ₹499.",
+    );
+    this.name = "AttemptPaymentRequiredError";
+  }
+}
 export class AttemptLimitReachedError extends Error {
   constructor(
     public readonly maxAttempts: number,
@@ -157,36 +28,157 @@ export class AttemptLimitReachedError extends Error {
   }
 }
 
-function hasSupabaseConfig() {
-  return Boolean(
-    env.NEXT_PUBLIC_SUPABASE_URL &&
-      getSupabasePublishableKey() &&
-      env.SUPABASE_SERVICE_ROLE_KEY,
-  );
-}
+export async function startAttempt(input: unknown) {
+  const parsed = startAttemptSchema.parse(input);
 
-function startLocalAttempt(testId: string) {
-  const test = getTestById(testId);
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!test) {
+  const db = createSupabaseAdminClient();
+
+  // 1. Verify that test exists and is published
+  const { data: test, error: testError } = await db
+    .from("tests")
+    .select("id, name, duration_minutes, is_published, max_attempts")
+    .eq("id", parsed.testId)
+    .eq("is_published", true)
+    .single();
+
+  if (testError || !test) {
     throw new AttemptNotFoundError("Published test not found.");
   }
 
-  const startedAt = new Date();
-  const expiresAt = calculateExpiresAt(startedAt, test.durationMinutes);
+  let attemptRow: {
+    id: string;
+    started_at: string;
+    expires_at: string;
+    guest_session_id?: string | null;
+  };
+
+  if (!user) {
+    // 2. Guest Flow: 1 free attempt tracked via guest_sessions
+    const guestSessionId = await getOrCreateGuestSessionId();
+    const { data: attempt, error: rpcError } = await db.rpc(
+      "start_guest_free_attempt",
+      {
+        p_guest_session_id: guestSessionId,
+        p_test_id: test.id,
+      },
+    );
+
+    if (rpcError) {
+      if (rpcError.message.includes("GUEST_ATTEMPT_LIMIT_REACHED")) {
+        throw new AttemptAuthError(
+          "You've completed your free mock test. Create a free account to unlock 3 additional mock tests.",
+        );
+      }
+      if (rpcError.message.includes("TEST_NOT_FOUND")) {
+        throw new AttemptNotFoundError("Published test not found.");
+      }
+      throw new Error(`Unable to start guest attempt: ${rpcError.message}`);
+    }
+
+    attemptRow = attempt as unknown as {
+      id: string;
+      started_at: string;
+      expires_at: string;
+    };
+  } else {
+    // 3. Registered Flow
+    const nowIso = new Date().toISOString();
+    const { data: activeSub } = await db
+      .from("subscriptions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .lte("starts_at", nowIso)
+      .gt("expires_at", nowIso)
+      .limit(1)
+      .maybeSingle();
+
+    if (activeSub) {
+      // 3a. Paid Subscriber Flow: unlimited attempts while subscription is valid
+      const { data: attempt, error: rpcError } = await db.rpc(
+        "start_subscription_attempt",
+        {
+          p_user_id: user.id,
+          p_test_id: test.id,
+        },
+      );
+
+      if (rpcError) {
+        if (rpcError.message.includes("TEST_MAX_ATTEMPTS_REACHED")) {
+          const maxAttempts = Number(test.max_attempts) || 1;
+          throw new AttemptLimitReachedError(maxAttempts);
+        }
+        if (rpcError.message.includes("TEST_NOT_FOUND")) {
+          throw new AttemptNotFoundError("Published test not found.");
+        }
+        throw new Error(`Unable to start subscription attempt: ${rpcError.message}`);
+      }
+
+      attemptRow = attempt as unknown as {
+        id: string;
+        started_at: string;
+        expires_at: string;
+      };
+    } else {
+      // 3b. Registered Free User Flow: up to 3 free attempts
+      const { data: attempt, error: rpcError } = await db.rpc(
+        "start_registered_free_attempt",
+        {
+          p_user_id: user.id,
+          p_test_id: test.id,
+        },
+      );
+
+      if (rpcError) {
+        if (rpcError.message.includes("FREE_ATTEMPT_LIMIT_REACHED")) {
+          throw new AttemptPaymentRequiredError(
+            "You've used all 3 free mock tests. Unlock all mock tests for ₹499.",
+          );
+        }
+        if (rpcError.message.includes("TEST_MAX_ATTEMPTS_REACHED")) {
+          const maxAttempts = Number(test.max_attempts) || 1;
+          throw new AttemptLimitReachedError(maxAttempts);
+        }
+        if (rpcError.message.includes("TEST_NOT_FOUND")) {
+          throw new AttemptNotFoundError("Published test not found.");
+        }
+        throw new Error(`Unable to start free attempt: ${rpcError.message}`);
+      }
+
+      attemptRow = attempt as unknown as {
+        id: string;
+        started_at: string;
+        expires_at: string;
+      };
+    }
+  }
+
+  // 4. Fetch questions and saved answer state (if resumed attempt)
+  const [questions, initialAnswers] = await Promise.all([
+    getSafeQuestionsFromSupabase(db, test.id),
+    getSavedAttemptStateFromSupabase(db, attemptRow.id),
+  ]);
 
   return {
-    attemptId: `local-${test.id}`,
+    attemptId: attemptRow.id,
     testId: test.id,
     testName: test.name,
-    startedAt: startedAt.toISOString(),
-    expiresAt: expiresAt.toISOString(),
-    questions: getSafeQuestionsForTest(test.id),
-    initialAnswers: {},
-    initialMarkedForReview: {},
-    mode: "local" as const,
+    startedAt: attemptRow.started_at,
+    expiresAt: attemptRow.expires_at,
+    guestSessionId: attemptRow.guest_session_id ?? null,
+    questions,
+    initialAnswers: initialAnswers.answers,
+    initialMarkedForReview: initialAnswers.markedForReview,
+    mode: "supabase" as const,
   };
 }
+
+export type StartedAttempt = Awaited<ReturnType<typeof startAttempt>>;
 
 async function getSafeQuestionsFromSupabase(
   supabase: ReturnType<typeof createSupabaseAdminClient>,

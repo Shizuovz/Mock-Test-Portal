@@ -5,6 +5,7 @@ import {
   AttemptAuthError,
   AttemptLimitReachedError,
   AttemptNotFoundError,
+  AttemptPaymentRequiredError,
   startAttempt,
 } from "@/lib/test-engine/start-attempt";
 import { getRemainingSeconds } from "@/lib/test-engine/timer";
@@ -28,29 +29,31 @@ export default async function ActiveTestPage({ params }: ActiveTestPageProps) {
 
     if (error instanceof AttemptLimitReachedError) {
       return (
-        <main className="min-h-screen bg-[#f4f6f5] px-6 py-8 text-[#15171a]">
-          <section className="mx-auto max-w-3xl border border-[#ccd8d4] bg-[#fbfcfb] p-6">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#a3412f]">
-              Attempt limit reached
-            </p>
-            <h1 className="mt-3 text-3xl font-semibold">Maximum attempts completed</h1>
-            <p className="mt-4 text-[#475467]">
+        <main className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 py-12 text-[#0F172A] flex items-center justify-center">
+          <section className="w-full max-w-xl rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-sm">
+            <span className="inline-block rounded-md bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-xs font-bold text-amber-800">
+              Attempt Limit Reached
+            </span>
+            <h1 className="headline-md mt-3 text-[#0F172A] font-bold">
+              Maximum Attempts Completed
+            </h1>
+            <p className="body-md mt-3 text-[#64748B] leading-relaxed">
               This examination allows a maximum of {error.maxAttempts} attempt
-              {error.maxAttempts === 1 ? "" : "s"}. You have already completed all
+              {error.maxAttempts === 1 ? "" : "s"}. You have completed all
               allocated attempts for this test.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href={`/test/${testId}/result`}
-                className="rounded-md bg-[#146b5f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0f544a]"
+                className="rounded-xl bg-[#2563EB] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#1D4ED8] transition"
               >
-                Review past results
+                Review Past Results →
               </Link>
               <Link
-                href="/dashboard/tests"
-                className="rounded-md border border-[#ccd8d4] bg-white px-4 py-2 text-sm font-semibold text-[#34403c] hover:bg-[#f4f6f5]"
+                href="/exams"
+                className="rounded-xl border border-[#CBD5E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#334155] shadow-2xs hover:bg-[#F8FAFC] transition"
               >
-                Browse other tests
+                Browse Other NSSB Tests
               </Link>
             </div>
           </section>
@@ -60,22 +63,63 @@ export default async function ActiveTestPage({ params }: ActiveTestPageProps) {
 
     if (error instanceof AttemptAuthError) {
       return (
-        <main className="min-h-screen bg-[#f4f6f5] px-6 py-8 text-[#15171a]">
-          <section className="mx-auto max-w-3xl border border-[#ccd8d4] bg-[#fbfcfb] p-6">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#146b5f]">
-              Sign in required
+        <main className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 py-12 text-[#0F172A] flex items-center justify-center">
+          <section className="w-full max-w-xl rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-sm">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-bold text-amber-900">
+              🎁 Free Guest Test Completed
+            </div>
+            <h1 className="headline-md mt-3 text-[#0F172A] font-bold">
+              Sign up to unlock 3 more free tests
+            </h1>
+            <p className="body-md mt-3 text-[#64748B] leading-relaxed">
+              You have completed your 1 free guest mock test. Create a free account now to instantly unlock <strong>3 additional full-length NSSB mock tests</strong>, complete with detailed performance analytics and solution keys.
             </p>
-            <h1 className="mt-3 text-3xl font-semibold">Log in to start this test</h1>
-            <p className="mt-4 text-[#475467]">
-              Attempts are tied to your account so answers, timing, and results can
-              be saved securely.
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link
+                href="/register"
+                className="rounded-xl bg-[#2563EB] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#1D4ED8] transition"
+              >
+                Create Free Account (+3 Mocks) →
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-xl border border-[#CBD5E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#334155] shadow-2xs hover:bg-[#F8FAFC] transition"
+              >
+                Log In
+              </Link>
+            </div>
+          </section>
+        </main>
+      );
+    }
+
+    if (error instanceof AttemptPaymentRequiredError) {
+      return (
+        <main className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 py-12 text-[#0F172A] flex items-center justify-center">
+          <section className="w-full max-w-xl rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-sm">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-700">
+              ⭐ All 3 Free Tests Completed
+            </div>
+            <h1 className="headline-md mt-3 text-[#0F172A] font-bold">
+              Unlock Unlimited NSSB Tests for ₹499
+            </h1>
+            <p className="body-md mt-3 text-[#64748B] leading-relaxed">
+              You have used all 3 free mock tests included with your account. Upgrade to our 1-Year Pro Pass for ₹499 to get unlimited attempts on all NSSB mock tests, full solutions, and diagnostic rankings.
             </p>
-            <Link
-              href="/login"
-              className="mt-6 inline-flex rounded-md bg-[#146b5f] px-4 py-2 text-sm font-semibold text-white"
-            >
-              Go to login
-            </Link>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link
+                href="/pricing"
+                className="rounded-xl bg-[#2563EB] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#1D4ED8] transition"
+              >
+                Unlock Pro Pass (₹499 / Year) →
+              </Link>
+              <Link
+                href="/dashboard/tests"
+                className="rounded-xl border border-[#CBD5E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#334155] shadow-2xs hover:bg-[#F8FAFC] transition"
+              >
+                Return to Dashboard
+              </Link>
+            </div>
           </section>
         </main>
       );
@@ -87,6 +131,7 @@ export default async function ActiveTestPage({ params }: ActiveTestPageProps) {
   return (
     <ActiveTestShell
       attemptId={attempt.attemptId}
+      guestSessionId={attempt.guestSessionId}
       testId={attempt.testId}
       testName={attempt.testName}
       startedAt={attempt.startedAt}

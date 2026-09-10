@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Newsreader, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 
-const inter = Inter({
+const newsreader = Newsreader({
   subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-newsreader",
   display: "swap",
-  variable: "--font-inter",
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-source-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -53,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${newsreader.variable} ${sourceSans.variable}`}>
       <body className="font-sans antialiased" suppressHydrationWarning>
         {children}
       </body>

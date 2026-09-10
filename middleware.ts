@@ -40,6 +40,33 @@ export async function middleware(request: NextRequest) {
 
   await supabase.auth.getUser();
 
+  // Ensure guest session ID cookie exists for guest attempts
+  if (!request.cookies.get("guest_session_id")?.value) {
+    const guestSessionId = crypto.randomUUID();
+    const requestHeaders = new Headers(request.headers);
+    const currentCookies = request.headers.get("cookie") || "";
+    requestHeaders.set(
+      "cookie",
+      currentCookies
+        ? `${currentCookies}; guest_session_id=${guestSessionId}`
+        : `guest_session_id=${guestSessionId}`,
+    );
+
+    response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+
+    response.cookies.set("guest_session_id", guestSessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+    });
+  }
+
   return response;
 }
 
